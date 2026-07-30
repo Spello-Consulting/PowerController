@@ -15,25 +15,23 @@ Edit the content below as appropriate for your environment.
 
 ```
 [Unit]
-Description=PowerController app
+Description=PowerController App
 After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 ExecStart=/home/nick/scripts/PowerController/launch.sh
 WorkingDirectory=/home/nick/scripts/PowerController
-StandardOutput=journal
-StandardError=journal
+StandardOutput=inherit
+StandardError=inherit
 User=nick
 Environment=PYTHONUNBUFFERED=1
 Environment=PATH=/home/nick/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-# Logging and restart behavior
-Restart=on-failure        # Only restart on non-zero exit code
-RestartSec=10             # Wait 10 seconds before restarting
-
-# Limit restart attempts (3 times in 60 seconds)
-StartLimitIntervalSec=60
-StartLimitBurst=3
+# Only restart on non-zero exit code
+Restart=on-failure
+# Wait 10 seconds before restarting
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
