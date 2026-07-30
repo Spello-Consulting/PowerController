@@ -10,4 +10,4 @@ git reset --hard origin/main                # Reset to the remote main branch
 
 ## For more information
 
-See the [PowerController issues list](https://github.com/NickElseySpelloC/PowerController/issues) for open / known / resolved bugs and enhancements.
+See the [PowerController issues list](https://github.com/Spello-Consulting/PowerController/issues) for open / known / resolved bugs and enhancements.

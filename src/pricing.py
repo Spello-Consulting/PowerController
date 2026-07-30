@@ -934,7 +934,7 @@ class PricingManager:
     def _save_usage_data(self) -> bool:  # noqa: PLR0914, PLR0915
         """Saves the raw usage data a CSV file, appending and truncating as needed.
 
-        Implements https://github.com/NickElseySpelloC/PowerController/issues/11
+        Implements https://github.com/Spello-Consulting/PowerController/issues/11
 
         Note: Energy usage is saved in kWh.
 

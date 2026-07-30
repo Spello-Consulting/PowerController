@@ -10,7 +10,7 @@
 * Web app to view the current state of each device and manually override if needed. 
 * Integrate with a UPS and control and output based on the UPS's "health".
 * Historical Tracking: Maintains past days of device runtime to optimize future scheduling.
-* Integrates with the [PowerControllerViewer app](https://github.com/NickElseySpelloC/PowerControllerViewer) so that you can view and chart status and history of all your output devices and meters.
+* Integrates with the [PowerControllerViewer app](https://github.com/Spello-Consulting/PowerController) so that you can view and chart status and history of all your output devices and meters.
 * Integrate with multiple temperature probes. Switch an output based on temperature thresholds. 
 * Set minimum, preferred and maximum operating times per day. Actual operating times are controlled by electicity prices and/or a predefined schedule. 
 * Vary preferred operating times each month (e.g. run your pool pump for longer in the summer).

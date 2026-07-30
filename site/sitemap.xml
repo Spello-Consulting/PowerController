@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/features/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/features/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/prod_deployment/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/prod_deployment/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/running/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/running/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/upgrading/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/upgrading/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/example_config/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/example_config/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/amber_api/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/amber_api/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/data_api/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/data_api/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/devices/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/devices/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/email/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/email/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/files/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/files/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/general/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/general/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/heartbeat_monitor/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/heartbeat_monitor/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/location/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/location/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/operating_schedules/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/operating_schedules/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/output_metering/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/output_metering/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/output_sequences/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/output_sequences/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/outputs/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/outputs/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/power_tariff/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/power_tariff/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/temp_probe_logging/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/temp_probe_logging/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/teslamate/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/teslamate/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/ups_integration/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/ups_integration/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/viewer_website/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/viewer_website/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/weather_client/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/weather_client/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/configuration/sections/website/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/configuration/sections/website/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/installation/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/installation/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/installation/device_setup/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/installation/device_setup/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/installation/install_app/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/installation/install_app/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/installation/prerequisites/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/installation/prerequisites/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
     <url>
-         <loc>https://github.com/NickElseySpelloC/PowerController/installation/raspberry_pi_python/</loc>
-         <lastmod>2026-07-12</lastmod>
+         <loc>https://github.com/Spello-Consulting/PowerController/installation/raspberry_pi_python/</loc>
+         <lastmod>2026-07-30</lastmod>
     </url>
 </urlset>

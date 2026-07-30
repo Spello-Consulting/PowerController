@@ -1,6 +1,6 @@
 # Configuration file - ViewerWebsite section
 
-Use this section to configure integration with the PowerControllerViewer app - see https://github.com/NickElseySpelloC/PowerControllerViewer
+Use this section to configure integration with the PowerControllerViewer app - see https://github.com/Spello-Consulting/PowerControllerViewer
 
 | Key | Description | 
 |:--|:--|

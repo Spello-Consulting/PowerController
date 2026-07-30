@@ -23,7 +23,7 @@ cd PowerController
 
 Clone the app from GitHub
 ```bash
-git clone https://github.com/NickElseySpelloC/PowerController.git .
+git clone https://github.com/Spello-Consulting/PowerController.git .
 ```
 
 Use UV to initialise the application and download all the supporting libraries
