@@ -33,7 +33,6 @@ SCSmartDevices:
     - Name: ShellyPool1
       Model: Shelly2PMG3
       Hostname: 192.168.86.28
-      Simulate: False
       ExpectOffline: True
       Outputs:
         - Name: "Pool Pump"
@@ -46,7 +45,6 @@ SCSmartDevices:
     - Name: ShellyPool2
       Model: Shelly2PMG3
       Hostname: 192.168.86.27
-      Simulate: False
       ExpectOffline: True
       Outputs:
         - Name: "Heating Pump"
@@ -59,7 +57,6 @@ SCSmartDevices:
     - Name: Irrigation
       Model: Shelly2PMG3
       Hostname: 192.168.86.250
-      Simulate: False
       ExpectOffline: True
       Outputs:
         - Name: "Irrigation Pump"
