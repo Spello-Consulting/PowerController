@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-env",
+            "type": "shell",
+            "command": "op",
+            "args": [
+                "inject",
+                "-i", "${workspaceFolder}/.env.dev.template",
+                "-o", "${workspaceFolder}/.env",
+                "-f"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clean-env",
+            "type": "shell",
+            "command": "rm",
+            "args": ["-f", "${workspaceFolder}/.env"],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

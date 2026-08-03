@@ -1,0 +1,11 @@
+UPSIntegration:
+  Enable: True   # Set to True to enable monitoring of UPS devices
+  PollingInterval: 30   # How often to check the UPS status in seconds
+  DataFile: logs/ups_status.csv   # Log UPS status to a CSV file. Set to blank to disable.
+  DataFileWriteInterval: 60   # How often to write the UPS status to the CSV file in seconds. Set to 0 to write on every poll (not recommended).
+  DataFileMaxDays: 3  # Maximum number of days to keep in the CSV data file. 
+  UPSDevices:   # A list of UPS devices to monitor. Each UPS must have a script that returns the runtime remaining in seconds and the charge remaining in percent.
+    - Name: Eaton 5E UPS
+      Script: scripts/ups_runtime.sh --ups eaton@localhost --simulate
+      MinChargeWhenDischarging: 10   # Minimum charge remaining in percent when discharging to consider the UPS as "healthy".
+      MinChargeWhenCharging: 80   # Minimum charge remaining in percent when charging to consider the UPS as "healthy".

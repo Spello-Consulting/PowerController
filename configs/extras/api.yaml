@@ -1,0 +1,34 @@
+DataAPI:
+  Enable: True
+  HostingIP: 0.0.0.0
+  Port: 8081
+  RefreshInterval: 30  # Seconds between cache refresh. Set to 0 to refresh every polling interval.
+  AccessKey:
+  TempProbeHistoryDays: 5 # Number of days of temp probe history data to include in the API response. requires TempProbeLogging to be enabled and HistoryDataFileMaxDays to be set to at least this value.
+  Outputs:
+    - Name: Network Rack
+      DisplayName: Network
+    - Name: "EM1.1 Living & Beds"
+      DisplayName: "Living & Beds"
+    - Name: Tesla
+  Meters:
+    - Name: "Panel EM1.1"
+      DisplayName: "Living & Beds"
+    - Name: "Panel EM1.2"
+      DisplayName: "Kitchen & Laundry"
+  TempProbes:
+    - Name: "Temp Pool Water"
+      DisplayName: "Pool"
+    - Name: "Temp Solar Return"
+      DisplayName: "Solar Return"
+    - Name: "Temp Air"
+      DisplayName: "Air"
+    - Name: "Temp Roof"
+      DisplayName: "Roof"
+  EnergyPrices:
+    AmberChannel: general
+    IntervalTime: 30    # Interval for each forecast period in minutes (e.g. 30 for half-hourly prices, 60 for hourly prices)
+    NumIntervals: 38    # Number of intervals to return in the forecast (e.g. 48 for 24 hours of half-hourly prices, 24 for 24 hours of hourly prices)
+    WarningPrice: 46.0   # If the price exceeds this value, the API will include a warning in the response for this interval. Set to 0 to disable warnings.
+    CriticalPrice: 50.0  # If the price exceeds this value, the API will include a critical warning in the response for this interval. Set to 0 to disable critical warnings.
+

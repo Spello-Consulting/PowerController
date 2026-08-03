@@ -1,0 +1,269 @@
+General:
+  # A label for this installation - used in the email subject and web viewer app
+  Label: Spello
+  PollingInterval: 10
+  # Print some basic information to the console during startup and operation
+  PrintToConsole: True
+  # A default price to use if the Amber API is not available and there is no schedule price defined
+  DefaultPrice: 25.0
+  CurrencySymbol: €
+  SubunitSymbol: ¢
+ 
+Website:
+  HostingIP: 0.0.0.0
+  Port: 8080
+  # How often to refresh the web page (in seconds). Set to 0 to disable auto-refresh.
+  PageAutoRefresh: 10
+  DebugMode: False
+
+
+AmberAPI:
+  Mode: Disabled
+  APIURL: https://api.amber.com.au/v1
+  RefreshInterval: 30
+  # UsageDataFile: logs/amber_usage_data.csv
+  PricesCacheFile: logs/latest_prices.json
+
+
+# Use this section to configure your Shelly devices used to control the lights
+# See this page for more information: https://nickelseyspelloc.github.io/sc_utility/guide/shelly_control/
+SCSmartDevices:
+  AllowDebugLogging: False
+  Devices:
+    - Name: ShellyPool1
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.28
+      Simulate: False
+      ExpectOffline: True
+      Outputs:
+        - Name: "Pool Pump"
+        - Name: "Chlorinator"
+      Meters:
+        - Name: "Pool Pump Meter"
+        - Name: "Chlorinator Meter"
+      TempProbes:
+        - Name: "ShellyPool1"
+    - Name: ShellyPool2
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.27
+      Simulate: False
+      ExpectOffline: True
+      Outputs:
+        - Name: "Heating Pump"
+        - Name: "Spare Output"
+      Meters:
+        - Name: "Heating Pump Meter"
+        - Name: "Spare Meter"
+      TempProbes:
+        - Name: "ShellyPool2"
+    - Name: Irrigation
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.250
+      Simulate: False
+      ExpectOffline: True
+      Outputs:
+        - Name: "Irrigation Pump"
+        - Name: "Irrigation Spare"
+      TempProbes:
+        - Name: "Irrigation"
+
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Pool Pump
+    DeviceOutput: "Pool Pump"
+    Mode: Schedule
+    Schedule: Pool Cleaning
+    DaysOfHistory: 14
+    MinHours: 2
+    MaxHours: 7
+    TargetHours: 6
+    MaxShortfallHours: 0
+    MaxBestPrice: 30.0
+    MaxPriorityPrice: 35.0
+    DeviceMeter: Pool Pump Meter
+    MaxDailyEnergyUse: 1300
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+    HideFromTempProbesSummary: True
+  - Name: Chlorinator
+    DeviceOutput: "Chlorinator"
+    Mode: Schedule
+    Schedule: Chlorinator
+    DaysOfHistory: 14
+    TargetHours: 4
+    MinHours: 2
+    MaxHours: 7
+    MaxShortfallHours: 0
+    MaxBestPrice: 30.0
+    MaxPriorityPrice: 35.0
+    DeviceMeter: Chlorinator Meter
+    ParentOutput: Pool Pump
+    MinDailyEnergyUse: 150
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+    HideFromTempProbesSummary: True    
+  - Name: Heating Pump
+    DeviceOutput: "Heating Pump"
+    Mode: Schedule
+    Schedule: Pool Solar
+    WeatherConstraint:
+      SkyCondition: cloudy, overcast, drizzle, rain, snow, thunderstorm
+      TemperatureBelow: 23.0
+      PrecipitationProbabilityAbove: 0.3
+      ActionIfMatch: TurnOff
+    DaysOfHistory: 14
+    TargetHours: 6
+    MinHours: 2
+    MaxHours: 7
+    MaxShortfallHours: 0
+    MaxBestPrice: 30.0
+    MaxPriorityPrice: 35.0    
+    DeviceMeter: Heating Pump Meter
+    ParentOutput: Pool Pump
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+    HideFromTempProbesSummary: True
+  - Name: Irrigation
+    DeviceOutput: "Irrigation Pump"
+    Mode: Schedule
+    Disable: True
+    Schedule: Irrigation
+    DaysOfHistory: 14
+    TargetHours: 0.08333333
+    MinHours: 0
+    MaxHours: 7 
+    MaxShortfallHours: 0
+    MaxBestPrice: 30.0
+    MaxPriorityPrice: 35.0    
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+    HideFromTempProbesSummary: True
+
+
+OutputMetering:
+  Enable: True    # Set to True to enable logging of output energy consumption data
+  DataFile: logs/output_usage.csv     # Record to CSV data file. Required
+  DataFileMaxDays: -1  # Maximum number of days to keep in the CSV data file. Set to -1 for unlimited.
+  OutputsToLog:   # A list of outputs to log. These must have a meter associated with them (Outputs: [Item]: DeviceMeter field)
+    - Output: Pool Pump
+    - Output: Chlorinator
+
+
+Location:
+  Timezone: Europe/Rome
+  GoogleMapsURL: https://www.google.com/maps/place/Via+Corogliano,+1,+06038+Spello+PG/@43.0091046,12.6922382,1428m
+
+
+WeatherClient:
+  RefreshIntervalMin: 5  # How often to refresh the weather data (in minutes).
+  PreferredProvider: "OpenWeatherMap"
+
+
+Files:
+  SavedStateFile: system_state.json
+  LogfileName: logs/logfile.log
+  LogfileVerbosity: debug
+  ConsoleVerbosity: debug
+
+
+ViewerWebsite:
+  Enable: True
+  BaseURL: https://power.elseyworld.com
+  APITimeout: 20
+  Frequency: 30
+
+
+HeartbeatMonitor:
+  # The URL of the website to monitor for availability
+  Enable: True
+  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/go1NRKbhTBwYcQKMn4Cfh1cj
+  # How long to wait for a response from the website before considering it down in seconds
+  HeartbeatTimeout: 5
+  # How often to post the state to the heartbeat monitor (in seconds)
+  Frequency: 20
+
+# Enter your settings here if you want to be emailed when there's a critical error 
+Email:
+  EnableEmail: True
+  SendEmailsTo: nick@elseyworld.com
+  SMTPServer: smtp.gmail.com
+  SMTPPort: 587
+  SubjectPrefix: "[Spello PowerController]: "
+
+
+OperatingSchedules:
+  - Name: Pool Cleaning
+    UsePowerTariff: True 
+    Windows:
+      - StartTime: "08:00"
+        EndTime: "08:30"
+        DaysOfWeek: All
+        Price: 26.60
+      - StartTime: "10:00"
+        EndTime: "16:00"
+        DaysOfWeek: All
+        Price: 26.60
+      - StartTime: "17:00"
+        EndTime: "17:30"
+        DaysOfWeek: All
+        Price: 26.60
+  - Name: Chlorinator
+    UsePowerTariff: True 
+    Windows:
+      - StartTime: "10:30"
+        EndTime: "16:00"
+        DaysOfWeek: All
+        Price: 26.60
+  - Name: Pool Solar
+    UsePowerTariff: True
+    Windows:
+      - StartTime: "11:00"
+        EndTime: "17:00"
+        DaysOfWeek: All
+        Price: 26.60
+  - Name: Irrigation
+    UsePowerTariff: True
+    Windows:
+      - StartTime: "09:00"
+        EndTime: "09:20"
+        DaysOfWeek: All
+        Price: 26.60
+
+
+PowerTariff:
+  - Name: Peak
+    Price: 0.266
+    StartTime: "08:00"
+    EndTime: "19:00"
+    DaysOfWeek: Mon, Tue, Wed, Thu, Fri
+
+  - Name: Shoulder
+    StartTime: "07:00"
+    EndTime: "08:00"
+    DaysOfWeek: Mon, Tue, Wed, Thu, Fri
+    Price: 0.279
+
+  - Name: Shoulder
+    StartTime: "19:00"
+    EndTime: "23:00"
+    DaysOfWeek: Mon, Tue, Wed, Thu, Fri
+    Price: 0.279
+
+  - Name: Shoulder
+    StartTime: "07:00"
+    EndTime: "23:00"
+    DaysOfWeek: Sat
+    Price: 0.279
+
+  - Name: Off-Peak
+    StartTime: "23:00"
+    EndTime: "07:00"
+    DaysOfWeek: All
+    Price: 0.260
+
+  - Name: Off-Peak
+    StartTime: "00:00"
+    EndTime: "00:00"
+    DaysOfWeek: Sun
+    Price: 0.260

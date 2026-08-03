@@ -1,6 +1,6 @@
 [project]
 name = "powercontroller"
-version = "2.0.11"
+version = "2.1.0"
 description = "App to control and monitor devices via Shelly and/or Tasmota smart switches"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -59,16 +59,5 @@ where = ["src"]
     "DOC402",  # yield values don't need docstring sections in test fixtures
     "PT011",   # pytest.raises may legitimately catch broad exceptions in tests
     "B017",    # related to PT011 — blind Exception catch acceptable in tests
-]
-
-[dev.env.sync]
-remote="~/Library/CloudStorage/Dropbox/Development/dev_setup/app_config/PowerController"
-patterns = [
-    ".env",
-    ".vscode/*",
-    "configs/*",
-    "system_state.json",
-    "logs/*",
-    "snapshots/dev/*",
 ]
 

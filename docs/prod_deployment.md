@@ -6,36 +6,13 @@ Note: These instructions shoudl work for Linux (Ubuntu tested), CentOS (Raspberr
 
 ## 1. Create a service file
 
-Edit a new systemd service file: 
+Create a new service file and edit it to review:
 ```bash
-sudo nano  at /etc/systemd/system/PowerController.service
+sudo cp deploy/PowerController.service /etc/systemd/system/PowerController.service
+
+sudo nano /etc/systemd/system/PowerController.service
 ```
 
-Edit the content below as appropriate for your environment. 
-
-```
-[Unit]
-Description=PowerController App
-After=network.target
-StartLimitIntervalSec=60
-StartLimitBurst=3
-
-[Service]
-ExecStart=/home/nick/scripts/PowerController/launch.sh
-WorkingDirectory=/home/nick/scripts/PowerController
-StandardOutput=inherit
-StandardError=inherit
-User=nick
-Environment=PYTHONUNBUFFERED=1
-Environment=PATH=/home/nick/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-# Only restart on non-zero exit code
-Restart=on-failure
-# Wait 10 seconds before restarting
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
 Key options to review:
 
 - **ExecStart**: Change the path to suit your installation.

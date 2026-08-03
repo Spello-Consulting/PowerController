@@ -1,0 +1,111 @@
+General:
+  # A label for this installation - used in the email subject and web viewer app
+  Label: PC Development
+  PollingInterval: 10
+  # Print some basic information to the console during startup and operation
+  PrintToConsole: True
+  # A default price to use if the Amber API is not available and there is no schedule price defined
+  DefaultPrice: 32.0
+  CurrencySymbol: €
+  SubunitSymbol: ¢
+
+ 
+Website:
+  HostingIP: 0.0.0.0
+  Port: 8080
+  # How often to refresh the web page (in seconds). Set to 0 to disable auto-refresh.
+  PageAutoRefresh: 10
+  DebugMode: False
+
+
+HeartbeatMonitor:
+  Enable: False
+  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/zcsNtnEQHRDNWJENvcZc94fx
+  HeartbeatTimeout: 5
+  Frequency: 20
+
+
+
+AmberAPI:
+  Mode: Disabled
+  APIURL: https://api.amber.com.au/v1
+  RefreshInterval: 30
+  UsageDataFile: logs/amber_usage_data.csv
+  PricesCacheFile: logs/latest_prices.json
+
+
+# Use this section to configure your Shelly devices used to control the lights
+# See this page for more information: https://nickelseyspelloc.github.io/sc_utility/guide/shelly_control/
+SCSmartDevices:
+  AllowDebugLogging: False
+  SimulationFileFolder: simulation_files/
+  Devices:
+    - Name: Sydney Dev A
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.30
+      Simulate: True
+      ExpectOffline: True
+      Outputs:
+        - Name: "Sydney Dev A O1"
+        - Name: "Sydney Dev A O2"
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Sydney Dev A
+    DeviceOutput: Sydney Dev A O1
+    Mode: Schedule
+    Schedule: General
+    AmberChannel: general
+    Disable: False
+    HideFromTempProbesSummary: False
+    TargetHours: 1.6
+    MinHours: 0
+    MaxHours: 6
+    MaxShortfallHours: 0
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 30.0
+
+Location:
+  Timezone: Australia/Sydney
+  GoogleMapsURL: https://www.google.com/maps/place/Sydney+NSW/@-33.8478053,150.602357,10z
+
+
+Files:
+  SavedStateFile: system_state.json
+  LogfileName: logs/logfile.log
+  LogfileVerbosity: debug
+  ConsoleVerbosity: debug
+
+
+ViewerWebsite:
+  Enable: False
+  BaseURL: http://127.0.0.1:8000
+  APITimeout: 20
+  Frequency: 10
+
+
+# Enter your settings here if you want to be emailed when there's a critical error 
+Email:
+  EnableEmail: True
+  SendEmailsTo: nick@elseyworld.com
+  SMTPServer: smtp.gmail.com
+  SMTPPort: 587
+  SubjectPrefix: "[Dev PowerController]: "
+
+
+OperatingSchedules:
+  - Name: General
+    UsePowerTariff: False
+    Windows:
+      - StartTime: "10:30"
+        EndTime: "15:00"
+        DaysOfWeek: All
+        Price: 20.12
+  - Name: Pool Solar
+    Windows:
+      - StartTime: "08:00"
+        EndTime: "11:30"
+        DaysOfWeek: All
+        # Price: 15
+
+

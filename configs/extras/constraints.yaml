@@ -1,0 +1,28 @@
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Sydney Dev A
+    DeviceOutput: Sydney Dev A O1
+    Mode: Schedule
+    Schedule: General
+    AmberChannel: general
+    Disable: False
+    HideFromTempProbesSummary: False
+    TargetHours: 1
+    MinHours: 0
+    MaxHours: 6
+    MaxShortfallHours: 0
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 30.0
+    UPSIntegration: 
+      UPS: Eaton 5E UPS
+      ActionIfUnhealthy: TurnOff
+    DatesOff:
+      - StartDate: 2026-10-01
+        EndDate: 2026-10-31
+    TempProbeConstraints:
+      - TempProbe: Sydney Dev A
+        Condition: GreaterThan
+        Temperature: 30.0
+        FallBackTemp: 26.0
+

@@ -1,0 +1,58 @@
+# Use this section to configure your Shelly devices used to control the lights
+# See this page for more information: https://nickelseyspelloc.github.io/sc_utility/guide/shelly_control/
+SCSmartDevices:
+  AllowDebugLogging: False
+  Devices:
+    - Name: Solar Heating
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.30
+      Simulate: True
+      ExpectOffline: True
+      Outputs:
+        - Name: "Solar Heating O1"
+        - Name: "Solar Heating O2"
+    - Name: Pool Solar
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.35
+      Simulate: True
+      TempProbes:
+        - Name: "Pool Solar"
+        - Name: "Temp Pool Water"
+        - Name: "Temp Solar Return"
+        - Name: "Temp Roof"
+        - Name: "Temp Air"
+
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Solar Heating
+    DeviceOutput: Solar Heating O1
+    Mode: BestPrice
+    Schedule: General
+    AmberChannel: general
+    TargetHours: -1
+    MaxShortfallHours: 0
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 25.0
+    MinHours: 1
+    TempProbeConstraints:
+      - TempProbe: Temp Roof
+        Condition: GreaterThan
+        Temperature: 35.0
+        # FallBackTemp: 30.0
+      - TempProbe: Temp Pool Water
+        Condition: LessThan
+        Temperature: 30.5
+        FallBackTemp: 31.5
+
+TempProbeLogging:
+    Enable: True
+    Probes:   # A list of temp probes to monitor.
+        - Name: "Temp Pool Water"
+        - Name: "Temp Solar Return"
+        - Name: "Temp Roof"
+        - Name: "Temp Air"
+    LoggingInterval: 1
+    SavedStateFileMaxDays: 5
+    HistoryDataFile: logs/temperature_history.csv
+    HistoryDataFileMaxDays: 365

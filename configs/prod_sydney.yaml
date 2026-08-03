@@ -1,0 +1,638 @@
+General:
+  # A label for this installation - used in the email subject and web viewer app
+  Label: Sydney
+  PollingInterval: 10
+  # Some critical errors can trigger email notifications - for example the AmberAPI not responding. This is the time in minutes for an issue to 
+  # persist before we send an email notification. Leave blank to disable.
+  ReportCriticalErrorsDelay: 10
+  # Print some basic information to the console during startup and operation
+  PrintToConsole: False
+  # A default price to use if the Amber API is not available and there is no schedule price defined
+  DefaultPrice: 32.0
+
+
+Website:
+  HostingIP: 0.0.0.0
+  Port: 8080
+  # How often to refresh the web page (in seconds). Set to 0 to disable auto-refresh.
+  PageAutoRefresh: 10
+  DebugMode: False
+
+
+AmberAPI:
+  # Operating mode for the Amber API: Live (attempt to download prices), Offline (pretend Amber API is offline, use cached prices). Disabled (fall back to schedule)
+  Mode: Live
+  # The base URL for the Amber API - do not change this unless instructed to do so
+  APIURL: https://api.amber.com.au/v1
+  # How long to wait for a response from the Amber API
+  Timeout: 15
+  # Exit the application if we get this number of concurrent errors from Amber that aren't timeouts
+  MaxConcurrentErrors: 4
+  # How often to refresh the pricing data from Amber (in minutes)
+  RefreshInterval: 15
+  # Save usage data to a CSV file for offline use. Leave blank to disable
+  UsageDataFile: logs/amber_usage_data.csv
+  # Maximum number of days to keep
+  UsageMaxDays: -1
+  # Location of the latest prices data cache file
+  PricesCacheFile: logs/latest_prices.json
+
+
+# Use this section to configure your smart devices used to control the lights
+SCSmartDevices:
+  AllowDebugLogging: False
+  ResponseTimeout: 8
+  RetryCount: 3
+  RetryDelay: 5
+  # Send an email notification if we get this number of concurrent errors
+  MaxConcurrentErrors: 6
+  PingAllowed: True
+  Devices:
+    - Name: Pool Pump
+      Model: ShellyPlus1PM
+      Hostname: 192.168.86.20
+      DeviceAlertTemp: 85.0
+      Inputs:
+        - Name: "Pool Pump Input"
+      Outputs:
+        - Name: "Pool Pump Output"
+      Meters:
+        - Name: "Pool Pump Meter"
+    - Name: Pool Solar
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.35
+      DeviceAlertTemp: 85.0
+      Outputs:
+        - Name: "Solar Pump"
+        - Name: "Solar Valve"
+      Meters:
+        - Name: "Solar Pump Meter"
+        - Name: "Solar Valve Meter"
+      TempProbes:
+        - Name: "Pool Solar"
+        - Name: "Temp Pool Water"
+          RequiresOutput: "Pool Pump Output"
+        - Name: "Temp Solar Return"
+          RequiresOutput: "Solar Pump"
+        - Name: "Temp Roof"
+        - Name: "Temp Air"
+    - Name: Pool Solar Fan
+      Model: ShellyPlus1PM
+      Hostname: 192.168.86.28
+      DeviceAlertTemp: 80.0
+      Outputs:
+        - Name: "Solar Fan Output"
+    - Name: Hot Water
+      Model: ShellyEM
+      Hostname: 192.168.86.27
+      ExpectOffline: True
+      Outputs:
+        - Name: "Hot Water O1"
+      Meters:
+        - Name: "Hot Water M1"
+        - Name: "Hot Water M2"
+    - Name: Panel EM1
+      Model: ShellyEMG3
+      Hostname: 192.168.86.44
+      ExpectOffline: True
+      Meters:
+        - Name: "Panel EM1.1"
+        - Name: "Panel EM1.2"
+    - Name: Panel EM2
+      Model: ShellyEMG3
+      Hostname: 192.168.86.46
+      ExpectOffline: True
+      Meters:
+        - Name: "Panel EM2.1"
+        - Name: "Panel EM2.2"
+    - Name: Panel EM3
+      Model: ShellyEM
+      Hostname: 192.168.86.22
+      ExpectOffline: True
+      Meters:
+        - Name: "Panel EM3.1"
+        - Name: "Panel EM3.2"
+    - Name: Network Rack
+      Model: Shelly1PMG3
+      Hostname: 192.168.86.26
+      Simulate: False
+      ExpectOffline: True
+      Outputs:
+        - Name: "Network Rack O1"
+
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Pool Pump
+    DeviceOutput: Pool Pump Output
+    Mode: BestPrice
+    Schedule: General
+    ConstraintSchedule: Pool Heating
+    AmberChannel: general
+    DaysOfHistory: 14
+    MinHours: 3
+    MinHoursAlert: True
+    MaxHours: 10
+    # Set TargetHours to -1 to run for all hours that fall within schedule or best price
+    TargetHours: 6
+    MonthlyTargetHours:
+      April: 5
+      May: 5
+      June: 5
+      July: 5
+      August: 5
+    MaxShortfallHours: 0
+    MinOnTime: 15        # Minimum minutes to stay on once turned on
+    MinOffTime: 10        # Optional: minimum minutes to stay off (prevent rapid cycling)    
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 30.0
+    DeviceMeter: Pool Pump Meter
+    MaxDailyEnergyUse: 7500
+    DeviceInput: Pool Pump Input
+    DeviceInputMode: TurnOn
+    StopOnExit: False
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+  - Name: Solar Pump
+    DeviceOutput: Solar Pump
+    Mode: Schedule
+    Schedule: Pool Solar
+    AmberChannel: general
+    DaysOfHistory: 14
+    TargetHours: -1
+    # Revert to 0 and False
+    MinHours: 2
+    MinHoursAlert: False
+    MaxHours: 6
+    MaxShortfallHours: 0
+    MinOnTime: 10        # Minimum minutes to stay on once turned on
+    MinOffTime: 5        # Optional: minimum minutes to stay off (prevent rapid cycling)
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 30.0
+    DeviceMeter: Solar Pump Meter
+    StopOnExit: False
+    ParentOutput: Pool Pump
+    TurnOnSequence: Turn On Solar Pump
+    TurnOffSequence: Turn Off Solar Pump
+    MaxAppOnTime: 60
+    MaxAppOffTime: 60
+    DatesOff:
+      - StartDate: 2026-04-01
+        EndDate: 2026-10-31
+    TempProbeConstraints:
+      - TempProbe: Temp Roof
+        Condition: GreaterThan
+        Temperature: 37.0
+        FallBackTemp: 33.0
+      - TempProbe: Temp Pool Water
+        Condition: LessThan
+        Temperature: 31.0
+  - Name: Solar Fan
+    DeviceOutput: Solar Fan Output
+    Mode: Schedule
+    Schedule: Pool Solar Fan
+    AmberChannel: general
+    DaysOfHistory: 14
+    TargetHours: -1
+    MinHours: 0
+    MaxHours: 18
+    MaxShortfallHours: 0
+    MaxBestPrice: 20.0
+    MaxPriorityPrice: 21.0
+    StopOnExit: False
+    TempProbeConstraints:
+      - TempProbe: Pool Solar
+        Condition: GreaterThan
+        Temperature: 75.0
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: Hot Water
+    DeviceOutput: Hot Water O1
+    Mode: BestPrice
+    Schedule: Controlled Load
+    AmberChannel: controlledLoad
+    DaysOfHistory: 14
+    TargetHours: -1
+    DatesOff:
+      - StartDate: 2026-05-12
+        EndDate: 2026-10-01
+    MaxBestPrice: 15.0
+    MaxPriorityPrice: 20.0
+    DeviceMeter: Hot Water M1
+    HideFromWebApp: True
+    HideFromViewerApp: False
+  - Name: Tesla
+    Type: teslamate
+    CarID: 1
+    DaysOfHistory: 14
+    AmberChannel: general
+    Schedule: General
+    HideFromWebApp: True
+    HideFromViewerApp: False
+  - Name: "EM1.1 Living & Beds"
+    Type: meter
+    DeviceMeter: Panel EM1.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM1.2 Kitchen & Laundry"
+    Type: meter
+    DeviceMeter: Panel EM1.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM2.1 Cooking"
+    Type: meter
+    DeviceMeter: Panel EM2.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 25
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM2.2 Bedroom A/C"
+    Type: meter
+    DeviceMeter: Panel EM2.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 20
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 100
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM3.1 Living A/C"
+    Type: meter
+    DeviceMeter: Panel EM3.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 20
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 100
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM3.2 Study A/C"
+    Type: meter
+    DeviceMeter: Panel EM3.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 20
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 100
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: Network Rack
+    DeviceOutput: Network Rack O1
+    Mode: BestPrice
+    Schedule: General
+    AmberChannel: general
+    DaysOfHistory: 14
+    TargetHours: -1
+    MaxShortfallHours: 0
+    MaxBestPrice: 50.0
+    MaxPriorityPrice: 52.0
+    HideFromWebApp: False
+    HideFromViewerApp: False
+    HideFromTempProbesSummary: True
+    UPSIntegration:
+      UPS: Eaton 5E UPS
+      ActionIfUnhealthy: TurnOn
+
+
+
+UPSIntegration:
+  Enable: True   # Set to True to enable monitoring of UPS devices
+  PollingInterval: 30   # How often to check the UPS status in seconds
+  DataFile: logs/ups_status.csv   # Log UPS status to a CSV file. Set to blank to disable.
+  DataFileWriteInterval: 60   # How often to write the UPS status to the CSV file in seconds. Set to 0 to write on every poll (not recommended).
+  DataFileMaxDays: 2  # Maximum number of days to keep in the CSV data file. 
+  UPSDevices:   # A list of UPS devices to monitor. Each UPS must have a script that returns the runtime remaining in seconds and the charge remaining in percent.
+    - Name: Eaton 5E UPS
+      Script: scripts/ups_runtime.sh --ups eaton@localhost
+      MinChargeWhenDischarging: 25   # Minimum charge remaining in percent when discharging to consider the UPS as "healthy".
+      MinChargeWhenCharging: 80   # Minimum charge remaining in percent when charging to consider the UPS as "healthy".
+
+
+OutputMetering:
+  Enable: True    # Set to True to enable logging of output energy consumption data
+  DataFile: logs/output_usage.csv     # Record to CSV data file. Required
+  DataFileMaxDays: -1  # Maximum number of days to keep in the CSV data file. Set to -1 for unlimited.
+  OutputsToLog:   # A list of outputs to log. These must have a meter associated with them (Outputs: [Item]: DeviceMeter field)
+    - Output: Pool Pump
+    - Output: Solar Pump
+    - Output: Hot Water
+    - Output: Tesla
+    - Output: "EM1.1 Living & Beds"
+      DisplayName: "Living & Beds"
+    - Output: "EM1.2 Kitchen & Laundry"
+      DisplayName: "Kitchen & Laundry"
+    - Output: "EM2.1 Cooking"
+      DisplayName: "Cooking"
+    - Output: "EM2.2 Bedroom A/C"
+      DisplayName: "Bedroom A/C"
+    - Output: "EM3.1 Living A/C"
+      DisplayName: "Living A/C"
+    - Output: "EM3.2 Study A/C"
+      DisplayName: "Study A/C"
+    - Output: Network Rack
+
+
+DataAPI:
+  Enable: True
+  HostingIP: 0.0.0.0
+  Port: 8081
+  RefreshInterval: 0
+  TempProbeHistoryDays: 5
+  Outputs:
+    - Name: Pool Pump
+      DisplayName: Pool
+    - Name: Solar Pump
+      DisplayName: Solar
+    - Name: Network Rack
+      DisplayName: Network
+  Meters:
+    - Name: "Panel EM1.1"
+      DisplayName: "Living & Beds"
+    - Name: "Panel EM1.2"
+      DisplayName: "Kitchen & Laundry"
+    - Name: "Panel EM2.1"
+      DisplayName: "Cooking"
+    - Name: "Panel EM2.2"
+      DisplayName: "Bedroom A/C"
+    - Name: "Panel EM3.1"
+      DisplayName: "Living A/C"
+    - Name: "Panel EM3.2"
+      DisplayName: "Study A/C"
+  TempProbes:
+    - Name: "Temp Pool Water"
+      DisplayName: "Pool"
+    - Name: "Temp Roof"
+      DisplayName: "Roof"
+    - Name: "Temp Air"
+      DisplayName: "Air"
+  EnergyPrices:
+    AmberChannel: general
+    IntervalTime: 30
+    NumIntervals: 24
+    WarningPrice: 40.0
+    CriticalPrice: 60.0
+
+
+OutputSequences:
+  - Name: "Turn On Solar Pump"
+    Description: "Turn on the actuator valve, wait for 30 sec then turn on the solar booster pump"
+    Timeout: 360
+    Steps:
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Valve"
+        State: True
+        Retries: 2
+        RetryBackoff: 1.0
+      - Type: SLEEP
+        Seconds: 50.0
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Pump"
+        State: True
+        Retries: 2
+        RetryBackoff: 1.0
+  - Name: "Turn Off Solar Pump"
+    Description: "Turn off the solar booster pump, wait for 10 seconds then turn off the actuator valve"
+    Timeout: 30
+    Steps:
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Pump"
+        State: False
+        Retries: 2
+        RetryBackoff: 1.0
+      - Type: SLEEP
+        Seconds: 10.0
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Valve"
+        State: False
+        Retries: 2
+        RetryBackoff: 1.0
+
+
+TeslaMate:
+  Enable: True
+  RefreshInterval: 10    # How often to refresh the TeslaMate data (in minutes). 
+  Host: 192.168.86.36   # The host address of the TeslaMate database (or use the TESLAMATE_DB_HOST environment variable)
+  Port: 5432            # The port number of the TeslaMate database (or use the TESLAMATE_DB_PORT environment variable)
+  DatabaseName: teslamate # The name of the TeslaMate database (or use the TESLAMATE_DB_NAME environment variable)
+  DBUsername: teslamate  # The username to connect to the TeslaMate database (or use the TESLAMATE_DB_USER environment variable)
+  GeofenceName: Home     # Optionally, only query the charging data within this geofence name. Leave blank to disable.
+  SaveRawData: True    # Save the raw imported TeslaMate data the system state file for debugging. Set to False (the default) to reduce file size.
+
+
+TempProbeLogging:
+    Enable: True
+    Probes:   # A list of temp probes to monitor.
+      - Name: Temp Pool Water
+        DisplayName: Pool
+        Colour: Blue
+      - Name: Temp Air
+        DisplayName: Air
+        Colour: Red
+      - Name: Temp Roof
+        DisplayName: Roof
+        Colour: Black
+      - Name: Pool Solar
+        DisplayName: Solar Device
+        HideFromViewerApp: True
+      - Name: Temp Solar Return
+        DisplayName: Solar Return
+    LoggingInterval: 60
+    LastReadingWithinMinutes: 180  # Only log readings that have been updated within this number of minutes
+    SavedStateFileMaxDays: 5
+    HistoryDataFile: logs/temperature_history.csv
+    HistoryDataFileMaxDays: 365
+    Charting:   # This contains settings for generating temperature charts for the web viewer app (future) and the PowerControllerViewer website.
+      Enable: True
+      Charts:
+        - Name: "Pool"
+          Probes:
+            - Temp Pool Water
+          DaysToShow: 10
+        - Name: "Roof"
+          Probes:
+            - Temp Air
+            - Temp Roof
+          DaysToShow: 10
+
+# Optionally use this section to specify the geographic location and timezone of your installation. This is used to determine the dawn and dusk times for scheduled events.
+# You can do this in one of three ways:
+# 1. Use a Shelly device's location (using IP lookup)- just specify the device name in the UseShellyDevice field
+# 2. Use a Google Maps URL to extract the location - specify the GoogleMapsURL field and the Timezone field.
+# 3. Manually specify the latitude and longitude - specify the Timezone, Latitude and Longitude fields.
+Location:
+  Timezone: Australia/Sydney
+  GoogleMapsURL: https://www.google.com/maps/place/Sydney+NSW/@-33.8478053,150.602357,10z
+
+
+Files:
+  # The name of the saved state file. This is used to store the state of the device between runs.
+  SavedStateFile: system_state.json
+  LogfileName: logs/logfile.log
+  LogfileMaxLines: 10000
+  # How much information do we write to the log file. One of: none; error; warning; summary; detailed; debug
+  LogfileVerbosity: debug
+  # How much information do we write to the console. One of: error; warning; summary; detailed; debug
+  ConsoleVerbosity: debug
+
+
+# Enter your settings here if you want to be emailed when there's a critical error 
+Email:
+  EnableEmail: True
+  SendEmailsTo: nick@elseyworld.com
+  SMTPServer: smtp.gmail.com
+  SMTPPort: 587
+  SubjectPrefix: "[Sydney PowerController]: "
+
+
+ViewerWebsite:
+  # Enable or disable posting to the web viewer app
+  Enable: True
+  BaseURL: https://power.elseyworld.com
+  APITimeout: 20
+  # How often to post the state to the web viewer app (in seconds)
+  Frequency: 30
+
+
+HeartbeatMonitor:
+  # The URL of the website to monitor for availability
+  Enable: True
+  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/8GJvoPUE51urACW1Q1BC6V2x
+  # How long to wait for a response from the website before considering it down in seconds
+  HeartbeatTimeout: 5
+  # How often to post the state to the heartbeat monitor (in seconds)
+  Frequency: 20
+
+OperatingSchedules:
+  - Name: General
+    Windows:
+      - StartTime: "00:00"
+        EndTime: "07:00"
+        DaysOfWeek: All
+        Price: 20.00
+      - StartTime: "07:00"
+        EndTime: "08:00"
+        DaysOfWeek: All
+        Price: 13.41
+      - StartTime: "08:00"
+        EndTime: "09:00"
+        DaysOfWeek: All
+        Price: 11.67
+      - StartTime: "09:00"
+        EndTime: "10:00"
+        DaysOfWeek: All
+        Price: 10.84
+      - StartTime: "10:00"
+        EndTime: "12:00"
+        DaysOfWeek: All
+        Price: 11.50
+      - StartTime: "12:00"
+        EndTime: "13:00"
+        DaysOfWeek: All
+        Price: 18.93
+      - StartTime: "13:00"
+        EndTime: "14:00"
+        DaysOfWeek: All
+        Price: 13.35
+      - StartTime: "14:00"
+        EndTime: "15:00"
+        DaysOfWeek: All
+        Price: 11.56
+      - StartTime: "15:00"
+        EndTime: "16:00"
+        DaysOfWeek: All
+        Price: 24.19
+      - StartTime: "16:00"
+        EndTime: "17:00"
+        DaysOfWeek: All
+        Price: 25.91
+      - StartTime: "17:00"
+        EndTime: "18:00"
+        DaysOfWeek: All
+        Price: 31.97
+      - StartTime: "18:00"
+        EndTime: "19:00"
+        DaysOfWeek: All
+        Price: 40.14
+      - StartTime: "19:00"
+        EndTime: "20:00"
+        DaysOfWeek: All
+        Price: 42.53
+      - StartTime: "20:00"
+        EndTime: "21:00"
+        DaysOfWeek: All
+        Price: 37.54
+      - StartTime: "21:00"
+        EndTime: "23:59"
+        DaysOfWeek: All
+        Price: 22.00
+  - Name: Pool Heating
+    Windows:
+      - StartTime: "09:00"
+        EndTime: "17:00"
+        DaysOfWeek: All
+      - StartTime: "22:30"
+        EndTime: "23:59"
+        DaysOfWeek: All
+  - Name: Pool Solar
+    Windows:
+      - StartTime: "10:00"
+        EndTime: "16:00"
+        DaysOfWeek: All
+        Price: 15
+  - Name: Pool Solar Fan
+    Windows:
+      - StartTime: "08:00"
+        EndTime: "21:00"
+        DaysOfWeek: All
+        Price: 15
+  - Name: Controlled Load
+    Windows:
+      - StartTime: "00:00"
+        EndTime: "01:00"
+        DaysOfWeek: All
+        Price: 2.93
+      - StartTime: "01:00"
+        EndTime: "02:00"
+        DaysOfWeek: All
+        Price: 6.53
+      - StartTime: "02:00"
+        EndTime: "03:00"
+        DaysOfWeek: All
+        Price: 3.26
+      - StartTime: "03:00"
+        EndTime: "04:00"
+        DaysOfWeek: All
+        Price: 2.00
+      - StartTime: "10:00"
+        EndTime: "11:00"
+        DaysOfWeek: All
+        Price: 11.42
+      - StartTime: "11:00"
+        EndTime: "17:00"
+        DaysOfWeek: All
+        Price: 1.00
+      - StartTime: "17:00"
+        EndTime: "22:00"
+        DaysOfWeek: All
+        Price: 35.00
+      - StartTime: "22:00"
+        EndTime: "23:00"
+        DaysOfWeek: All
+        Price: 14.06
+      - StartTime: "23:00"
+        EndTime: "23:58"
+        DaysOfWeek: All
+        Price: 6.28

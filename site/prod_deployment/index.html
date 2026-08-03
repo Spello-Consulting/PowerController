@@ -1298,33 +1298,10 @@
 <p>Now that you have the app installed and <a href="../running/">tested from the command line</a> it's time to set this up properly to run in a production environment. In this setup we will configure the PowerController app (and its web interface if configured) to run via system daemon.</p>
 <p>Note: These instructions shoudl work for Linux (Ubuntu tested), CentOS (RaspberryPi) and macOS environments. Windows installations will be documented at a later date.</p>
 <h2 id="1-create-a-service-file">1. Create a service file</h2>
-<p>Edit a new systemd service file: </p>
-<pre><code class="language-bash">sudo nano  at /etc/systemd/system/PowerController.service
-</code></pre>
-<p>Edit the content below as appropriate for your environment. </p>
-<pre><code>[Unit]
-Description=PowerController app
-After=network.target
+<p>Create a new service file and edit it to review:</p>
+<pre><code class="language-bash">sudo cp deploy/PowerController.service /etc/systemd/system/PowerController.service
 
-[Service]
-ExecStart=/home/nick/scripts/PowerController/launch.sh
-WorkingDirectory=/home/nick/scripts/PowerController
-StandardOutput=journal
-StandardError=journal
-User=nick
-Environment=PYTHONUNBUFFERED=1
-Environment=PATH=/home/nick/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-# Logging and restart behavior
-Restart=on-failure        # Only restart on non-zero exit code
-RestartSec=10             # Wait 10 seconds before restarting
-
-# Limit restart attempts (3 times in 60 seconds)
-StartLimitIntervalSec=60
-StartLimitBurst=3
-
-[Install]
-WantedBy=multi-user.target
+sudo nano /etc/systemd/system/PowerController.service
 </code></pre>
 <p>Key options to review:</p>
 <ul>

@@ -1,0 +1,26 @@
+SCSmartDevices:
+  AllowDebugLogging: False
+  ResponseTimeout: 8
+  RetryCount: 3
+  RetryDelay: 5
+  # Send an email notification if we get this number of concurrent errors
+  MaxConcurrentErrors: 6
+  PingAllowed: True
+  Devices:
+    # Use Tasmota01
+    - Name: Pool Solar Fan
+      Model: Tasmota
+      Hostname: 192.168.86.37
+      DeviceAlertTemp: 80.0
+      Outputs:
+        - Name: "Solar Fan Output"
+    # Use Tasmota02
+    - Name: Hot Water
+      Model: Tasmota
+      Hostname: 192.168.86.41
+      ExpectOffline: True
+      Outputs:
+        - Name: "Hot Water O1"
+      Meters:
+        - Name: "Hot Water M1"
+

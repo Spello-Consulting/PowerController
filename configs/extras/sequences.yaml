@@ -1,0 +1,52 @@
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Sydney Dev A
+    DeviceOutput: Solar Pump
+    Mode: Schedule
+    Schedule: Pool Solar
+    AmberChannel: general
+    DaysOfHistory: 14
+    TargetHours: -1
+    MinHours: 2
+    MaxHours: 6
+    MaxShortfallHours: 0
+    MaxBestPrice: 35.0
+    MaxPriorityPrice: 40.0
+    StopOnExit: False
+    TurnOnSequence: Turn On Solar Pump
+    TurnOffSequence: Turn Off Solar Pump
+
+
+OutputSequences:
+  - Name: "Turn On Solar Pump"
+    Description: "Turn on the actuator valve, wait for 30 sec then turn on the solar booster pump"
+    Timeout: 360
+    Steps:
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Valve"
+        State: True
+        Retries: 2
+        RetryBackoff: 1.0
+      - Type: SLEEP
+        Seconds: 22.0
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Pump"
+        State: True
+        Retries: 2
+        RetryBackoff: 1.0
+  - Name: "Turn Off Solar Pump"
+    Description: "Turn off the solar booster pump, wait for 10 seconds then turn off the actuator valve"
+    Timeout: 30
+    Steps:
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Pump"
+        State: False
+        Retries: 2
+        RetryBackoff: 1.0
+      - Type: SLEEP
+        Seconds: 10.0
+      - Type: CHANGE_OUTPUT
+        OutputIdentity: "Solar Valve"
+        State: False
+        Retries: 2
+        RetryBackoff: 1.0
