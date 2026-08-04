@@ -10,7 +10,7 @@ WorkingDirectory=/home/nick/scripts/PowerController
 StandardOutput=inherit
 StandardError=inherit
 User=nick
-EnvironmentFile=/home/pi/.config/op/service-account-token
+EnvironmentFile=/home/nick/.config/op/service-account-token
 Environment=PATH=/home/nick/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Only restart on non-zero exit code
