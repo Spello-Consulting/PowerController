@@ -87,9 +87,6 @@ ViewerWebsite:
 # Enter your settings here if you want to be emailed when there's a critical error 
 Email:
   EnableEmail: True
-  SendEmailsTo: nick@elseyworld.com
-  SMTPServer: smtp.gmail.com
-  SMTPPort: 587
   SubjectPrefix: "[Dev PowerController]: "
 
 
