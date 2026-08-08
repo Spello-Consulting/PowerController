@@ -124,7 +124,7 @@ Outputs:
   - Name: Irrigation
     DeviceOutput: "Irrigation Pump"
     Mode: Schedule
-    Disable: True
+    Disable: False
     Schedule: Irrigation
     DaysOfHistory: 14
     TargetHours: 0.08333333
@@ -219,8 +219,8 @@ OperatingSchedules:
   - Name: Irrigation
     UsePowerTariff: True
     Windows:
-      - StartTime: "09:00"
-        EndTime: "09:20"
+      - StartTime: "16:30"
+        EndTime: "16:45"
         DaysOfWeek: All
         Price: 26.60
 
