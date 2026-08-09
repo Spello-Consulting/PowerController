@@ -127,9 +127,9 @@ Outputs:
     Disable: False
     Schedule: Irrigation
     DaysOfHistory: 14
-    TargetHours: 0.08333333
+    TargetHours: -1
     MinHours: 0
-    MaxHours: 7 
+    MaxHours: 0.5
     MaxShortfallHours: 0
     MaxBestPrice: 30.0
     MaxPriorityPrice: 35.0    
