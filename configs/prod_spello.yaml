@@ -129,7 +129,7 @@ Outputs:
     DaysOfHistory: 14
     TargetHours: -1
     MinHours: 0
-    MaxHours: 0.5
+    MaxHours:  1.0
     MaxShortfallHours: 0
     MaxBestPrice: 30.0
     MaxPriorityPrice: 35.0    
