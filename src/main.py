@@ -116,6 +116,7 @@ def main():  # noqa: PLR0915
         stop_event.set()
         wake_event.set()
     signal.signal(signal.SIGINT, handle_sigint)
+    signal.signal(signal.SIGTERM, handle_sigint)
 
     # Get our default schema, validation schema, and placeholders.
     schemas = ConfigSchema()

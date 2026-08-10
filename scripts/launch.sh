@@ -188,22 +188,14 @@ if ! "$UVCmd" sync; then
   exit 2
 fi
 
-# Treat Ctrl-C or systemd stop (SIGTERM) as a clean, intentional shutdown
-term_handler() {
-  echo "[launcher] Caught termination — exiting cleanly so systemd does not restart."
-  exit 0
-}
-trap term_handler SIGINT SIGTERM
-
+# Hand off to the app with `exec`, replacing this launcher shell with uv (and,
+# under it, the Python process). That way SIGINT/SIGTERM are delivered straight
+# to the app rather than to a shell that can't forward them — so `systemctl stop`
+# and Ctrl-C both reach main.py's signal handler for a graceful shutdown.
+#
+# uv's exit status becomes this process's exit status, so systemd's
+# Restart=on-failure still sees the real result: a graceful SIGTERM shutdown
+# exits 0 (no restart), a crash exits non-zero (systemd restarts it).
 echo "[launcher] Starting app with uv run $ScriptName from directory $HomeDir"
 echo "[launcher] Command line: $UVCmd run $ScriptName $*"
-"$UVCmd" run "$ScriptName" "$@"
-app_rc=$?
-
-if [ $app_rc -eq 0 ]; then
-  echo "[launcher] App exited normally (0)."
-  exit 0
-else
-  echo "[launcher] App exited with error ($app_rc) — signaling failure so systemd restarts."
-  exit $app_rc
-fi
+exec "$UVCmd" run "$ScriptName" "$@"

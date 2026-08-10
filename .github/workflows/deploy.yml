@@ -1,0 +1,56 @@
+name: Deploy PowerController
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - sydneyapp
+          - pi-spello
+          - both
+
+jobs:
+  deploy-sydneyapp:
+    name: Deploy → sydneyapp
+    if: ${{ inputs.environment == 'sydneyapp' || inputs.environment == 'both' }}
+    runs-on: [self-hosted, sydneyapp]
+    environment: sydneyapp        # triggers approval gate if configured in GitHub
+    steps:
+      - name: Stop the service
+        run: |
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
+
+      - name: Pull latest from GitHub
+        run: sudo git -C /home/nick/scripts/PowerController pull
+
+      - name: Deploy and start the service
+        run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy sydneyapp
+
+      - name: Verify service is running
+        run: |
+          sleep 6
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh is-active
+
+  deploy-pi-spello:
+    name: Deploy → pi-spello
+    if: ${{ inputs.environment == 'pi-spello' || inputs.environment == 'both' }}
+    runs-on: [self-hosted, pi-spello]
+    environment: pi-spello
+    steps:
+      - name: Stop the service
+        run: |
+          sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh stop
+
+      - name: Pull latest from GitHub
+        run: sudo git -C /home/pi/scripts/PowerController pull
+
+      - name: Deploy and start the service
+        run: sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh deploy pi-spello
+
+      - name: Verify service is running
+        run: |
+          sleep 6
+          sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh is-active
