@@ -60,4 +60,3 @@ where = ["src"]
     "PT011",   # pytest.raises may legitimately catch broad exceptions in tests
     "B017",    # related to PT011 — blind Exception catch acceptable in tests
 ]
-
