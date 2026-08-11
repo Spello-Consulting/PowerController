@@ -166,7 +166,7 @@ Files:
 
 ViewerWebsite:
   Enable: True
-  BaseURL: https://power.elseyworld.com
+  BaseURL: https://sydneyapp.desmana-eagle.ts.net
   APITimeout: 20
   Frequency: 30
 
