@@ -497,7 +497,7 @@ Email:
 ViewerWebsite:
   # Enable or disable posting to the web viewer app
   Enable: True
-  BaseURL: https://sydneyapp.desmana-eagle.ts.net
+  BaseURL: http://127.0.0.1:8000
   APITimeout: 20
   # How often to post the state to the web viewer app (in seconds)
   Frequency: 30
