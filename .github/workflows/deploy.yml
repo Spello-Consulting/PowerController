@@ -24,7 +24,8 @@ jobs:
           sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
 
       - name: Pull latest from GitHub
-        run: sudo git -C /home/nick/scripts/PowerController pull
+        run: |
+          sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/gitrefresh.sh --yes
 
       - name: Deploy and start the service
         run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy sydneyapp
@@ -45,7 +46,8 @@ jobs:
           sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh stop
 
       - name: Pull latest from GitHub
-        run: sudo git -C /home/pi/scripts/PowerController pull
+        run: |
+          sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/gitrefresh.sh --yes
 
       - name: Deploy and start the service
         run: sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh deploy pi-spello
