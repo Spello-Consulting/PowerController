@@ -400,6 +400,7 @@ class OutputManager:  # noqa: PLR0904
             "allow_actions": True,
             "name": self.name,
             "is_on": is_device_output_on,
+            "is_online": view.get_device_online(self.device_id),
             "mode": self.app_mode.value,
             "max_app_mode_on_minutes": self.app_mode_max_on_time,
             "max_app_mode_off_minutes": self.app_mode_max_off_time,

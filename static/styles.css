@@ -148,6 +148,24 @@ header h1 {
   border-color: #16213e;
 }
 
+.mode-button:disabled {
+  background: #f0f1f4;
+  color: #aab;
+  border-color: #dde;
+  cursor: not-allowed;
+}
+
+.mode-button:disabled:hover {
+  background: #f0f1f4;
+  border-color: #dde;
+}
+
+.mode-button.active:disabled {
+  background: #6b7280;
+  color: #e5e7eb;
+  border-color: #6b7280;
+}
+
 /* ── Reason text ───────────────────────────────────────────────────────────── */
 
 .reason-text {

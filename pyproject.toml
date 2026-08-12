@@ -1,6 +1,6 @@
 [project]
 name = "powercontroller"
-version = "2.1.0"
+version = "2.1.1"
 description = "App to control and monitor devices via Shelly and/or Tasmota smart switches"
 readme = "README.md"
 requires-python = ">=3.13"

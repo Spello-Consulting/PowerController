@@ -33,6 +33,7 @@ SAMPLE_WEBAPP_DATA = {
             "id": "network_rack",
             "name": "Network Rack",
             "is_on": False,
+            "is_online": True,
             "mode": "auto",
             "allow_actions": True,
             "max_app_mode_on_minutes": 0,

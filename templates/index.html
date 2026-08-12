@@ -61,15 +61,18 @@
         </div>
         {% if output.allow_actions %}
         <div class="button-group">
-          <button class="mode-button {{ 'active' if output.mode == 'on' else '' }}" 
-                  data-mode="on" 
-                  onclick="setMode('{{ output.id }}', 'on')">On</button>
-          <button class="mode-button {{ 'active' if output.mode == 'off' else '' }}" 
-                  data-mode="off" 
-                  onclick="setMode('{{ output.id }}', 'off')">Off</button>
-          <button class="mode-button {{ 'active' if output.mode == 'auto' else '' }}" 
-                  data-mode="auto" 
-                  onclick="setMode('{{ output.id }}', 'auto')">Auto</button>
+          <button class="mode-button {{ 'active' if output.mode == 'on' else '' }}"
+                  data-mode="on"
+                  onclick="setMode('{{ output.id }}', 'on')"
+                  {{ 'disabled' if not output.is_online else '' }}>On</button>
+          <button class="mode-button {{ 'active' if output.mode == 'off' else '' }}"
+                  data-mode="off"
+                  onclick="setMode('{{ output.id }}', 'off')"
+                  {{ 'disabled' if not output.is_online else '' }}>Off</button>
+          <button class="mode-button {{ 'active' if output.mode == 'auto' else '' }}"
+                  data-mode="auto"
+                  onclick="setMode('{{ output.id }}', 'auto')"
+                  {{ 'disabled' if not output.is_online else '' }}>Auto</button>
         </div>
         {% endif %}
       </div>
@@ -355,18 +358,17 @@
           });
         });
 
-        // Button active states
-        if (output.mode) {
-          const buttons = card.querySelectorAll('.mode-button');
-          buttons.forEach((btn) => {
+        // Button active states + disable when the device is offline
+        const buttons = card.querySelectorAll('.mode-button');
+        buttons.forEach((btn) => {
+          if (output.mode) {
             const btnMode = btn.getAttribute('data-mode');
-            if (btnMode === output.mode) {
-              btn.classList.add('active');
-            } else {
-              btn.classList.remove('active');
-            }
-          });
-        }
+            btn.classList.toggle('active', btnMode === output.mode);
+          }
+          if (typeof output.is_online === 'boolean') {
+            btn.disabled = !output.is_online;
+          }
+        });
       });
     }
 

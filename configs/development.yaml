@@ -42,7 +42,7 @@ SCSmartDevices:
   Devices:
     - Name: Sydney Dev A
       Model: Shelly2PMG3
-      Hostname: 192.168.86.30
+      Hostname: 192.168.86.99
       Simulate: True
       ExpectOffline: True
       Outputs:
