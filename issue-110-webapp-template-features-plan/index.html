@@ -1,0 +1,1469 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/Spello-Consulting/PowerController/issue-110-webapp-template-features-plan/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Issue #110 — Copy in features from the template web app - PowerController Utility</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#issue-110-copy-in-features-from-the-template-web-app" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PowerController Utility" class="md-header__button md-logo" aria-label="PowerController Utility" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PowerController Utility
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Issue #110 — Copy in features from the template web app
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PowerController Utility" class="md-nav__button md-logo" aria-label="PowerController Utility" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PowerController Utility
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation steps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisite Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/device_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/install_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Configuration Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/example_config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example File
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sections
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sections
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/general/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    General
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/email/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Email
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/website/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Website
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/amber_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AmberAPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/devices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Devices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/operating_schedules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OperatingSchedules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/output_sequences/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OutputSequences
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/viewer_website/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ViewerWebsite
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/data_api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DataAPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/output_metering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OutputMetering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/temp_probe_logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TempProbeLogging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/ups_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UPSIntegration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/location/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Location
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/teslamate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TeslaMate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/sections/heartbeat_monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HeartbeatMonitor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../running/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the App
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prod_deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Production Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upgrading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Upgrading an existing installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-state-starting-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current state (starting point)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisions-powercontroller-specific" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisions (PowerController-specific)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Dependency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-srcwebapppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. src/webapp.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-templates-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Templates (templates/)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-static-static" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Static (static/)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test / verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#out-of-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Out of scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="issue-110-copy-in-features-from-the-template-web-app">Issue #110 — Copy in features from the template web app</h1>
+<p>Port three template-webapp features into the PowerController web UI, following the
+reference implementation done for LightingControl
+(<code>/Users/nick/dev/LightingControl/docs/webapp-template-features-implementation-notes.md</code>).</p>
+<h2 id="goal">Goal</h2>
+<p>Title bar right side becomes, in order:</p>
+<ol>
+<li>Clock</li>
+<li>Display-mode button (Day / Night / System, persisted in <code>localStorage</code>)</li>
+<li><strong>System</strong> button → <code>/system</code> page</li>
+<li><strong>Config</strong> button → <code>/config</code> page</li>
+</ol>
+<p>Plus two new pages:</p>
+<ul>
+<li><strong><code>/system</code></strong> — platform info + psutil host metrics + <strong>Number of outputs</strong>
+  (excludes the template's <em>Simulation mode</em> and <em>Cities loaded</em> rows).</li>
+<li><strong><code>/config</code></strong> — dumps the active YAML config file contents + its path.</li>
+</ul>
+<h2 id="current-state-starting-point">Current state (starting point)</h2>
+<ul>
+<li><code>templates/</code> and <code>static/</code> live at the <strong>repo root</strong>.</li>
+<li>All routes are inline in <code>src/webapp.py</code> (<code>_register_routes</code>).</li>
+<li>Static file is <code>static/styles.css</code> (note the <code>s</code>) + <code>static/favicon.ico</code>.</li>
+<li><code>src/webapp.py</code> exposes public <code>WebAppNotifier</code> (dataclass) and
+  <code>create_asgi_app(controller, config, logger) -&gt; (FastAPI, WebAppNotifier)</code>.</li>
+<li><code>tests/test_webapp.py</code> imports <code>WebAppNotifier</code> and <code>create_asgi_app</code> from <code>webapp</code>.</li>
+<li><code>config.config_path</code> (a <code>Path</code>) is available on <code>SCConfigManager</code>.</li>
+<li><code>app_label</code> = <code>config.get("General", "Label", default="PowerController")</code>;
+  also present in the snapshot as <code>global_data.AppLabel</code>.</li>
+<li><code>Website.PageAutoRefresh</code> already exists in the config schema (min 1, max 3600).</li>
+<li>The home page currently hardcodes a 60 s full-page reload.</li>
+</ul>
+<h2 id="decisions-powercontroller-specific">Decisions (PowerController-specific)</h2>
+<ul>
+<li><strong>Keep the web layer at the repo root</strong> (do <em>not</em> move under <code>src/</code>). The notes'
+  <code>src/</code> split is optional ("if an app currently keeps them at root… <code>git mv</code>"); moving
+  is pure churn here and would require touching <code>main.py</code>, the dataapi mount paths, and
+  deploy configs. We adopt the <em>routes-vs-factory split</em> only in spirit: routes stay in
+  <code>webapp.py</code> but the three new GET routes are added alongside the existing ones. This
+  keeps the diff small and the public <code>create_asgi_app</code> signature untouched.</li>
+<li>Rationale: the notes explicitly allow either layout; the value the issue asks for is
+    the three features, not the directory move.</li>
+<li><strong>Keep the static filename <code>styles.css</code></strong> and the existing <code>favicon.ico</code> (no rename to
+  <code>style.css</code>), to avoid breaking the favicon reference and minimise churn.</li>
+<li><strong>App label</strong>: pass the snapshot's <code>global_data.AppLabel</code> into every template context so
+  the header title is consistent across all three pages.</li>
+<li><strong>No simulation mode / no disable flag</strong>: PowerController has neither, so omit the
+  template's SIMULATION badge and the <em>Simulation mode</em> / <em>Cities loaded</em> rows. The only
+  app-specific system counter is <strong>Number of outputs</strong> = <code>len(snapshot["outputs"])</code>.</li>
+<li><strong>Page auto-refresh</strong>: drive the home-page reload from <code>Website.PageAutoRefresh</code>
+  (default 60) instead of the hardcoded 60 s.</li>
+</ul>
+<h2 id="changes">Changes</h2>
+<h3 id="1-dependency">1. Dependency</h3>
+<ul>
+<li><code>uv add psutil</code> (updates <code>pyproject.toml</code> + <code>uv.lock</code>).</li>
+</ul>
+<h3 id="2-srcwebapppy">2. <code>src/webapp.py</code></h3>
+<ul>
+<li>Add a <code>_NoCacheStaticFiles(StaticFiles)</code> subclass that sets
+  <code>Cache-Control: no-cache</code>, and mount static through it (so updated
+  <code>styles.css</code> isn't served stale).</li>
+<li>Add three new HTTP GET routes inside <code>_register_routes</code> (keeping the existing
+  <code>/</code> and <code>/ws</code>):</li>
+<li><strong><code>GET /system</code></strong> — validate key; snapshot via <code>controller.get_webapp_data()</code>;
+    build <code>system_info</code> and render <code>system.html</code>. Metrics:<ul>
+<li><code>platform</code>: Operating system, Platform, Architecture, Hostname, Python version.</li>
+<li><code>psutil</code>: Uptime (<code>time.time() - psutil.boot_time()</code>, formatted <code>Xd Yh Zm</code>),
+  Memory used (<code>virtual_memory().percent</code>), CPU load. <strong><code>psutil.cpu_percent(0.3)</code>
+  runs via <code>asyncio.to_thread</code></strong> (it blocks).</li>
+<li><strong>Number of outputs</strong> = <code>len(snapshot.get("outputs", {}))</code>.</li>
+</ul>
+</li>
+<li><strong><code>GET /config</code></strong> — validate key; read <code>config.config_path.read_text(encoding="utf-8")</code>
+    inside <code>try/except OSError</code>; render <code>config.html</code> with <code>config_text</code> + <code>config_path</code>.</li>
+<li>Update <strong><code>GET /</code></strong> to also pass <code>app_label</code>, <code>access_key</code> (from <code>?key=</code>), and
+    <code>page_auto_refresh</code> (from <code>Website.PageAutoRefresh</code>, default 60) into the context, and
+    render <code>home.html</code>.</li>
+<li>Add a <code>_format_uptime(seconds) -&gt; str</code> helper (<code>Xd Yh Zm</code>).</li>
+<li>No change to the public API: <code>create_asgi_app</code> signature and the public
+  <code>WebAppNotifier</code> name stay as-is (test compatibility preserved).</li>
+</ul>
+<h3 id="3-templates-templates">3. Templates (<code>templates/</code>)</h3>
+<ul>
+<li><strong><code>base.html</code></strong> (new) — shared shell:</li>
+<li><code>&lt;head&gt;</code> with pre-paint theme script (reads <code>localStorage["theme"]</code>, default
+    <code>"system"</code>, sets <code>data-theme</code> on <code>&lt;html&gt;</code> before first paint).</li>
+<li><code>&lt;header&gt;</code> with <code>&lt;h1&gt;</code> app label (links home, preserving <code>?key=</code>) and
+    <code>&lt;nav class="header-right"&gt;</code>: <code>#clock</code>, <code>#theme-toggle</code> (cycles System → Light → Dark,
+    icons 🖥️ / ☀️ / 🌙), <code>/system</code> link, <code>/config</code> link — each link carries
+    <code>?key={{ access_key }}</code> when set.</li>
+<li><code>&lt;footer&gt;</code> with <code>#conn-status</code> + <code>#last-refresh</code>.</li>
+<li><code>window.__ACCESS_KEY__</code> / <code>window.__PAGE_AUTO_REFRESH__</code> globals, then
+    <code>&lt;script src="/static/app.js"&gt;</code>, then inline clock + theme-toggle scripts.</li>
+<li>Blocks: <code>{% block title %}</code>, <code>{% block content %}</code>, <code>{% block scripts %}</code>.</li>
+<li><strong><code>index.html</code> → <code>home.html</code></strong> — <code>git mv</code> and reparent to <code>{% extends "base.html" %}</code>;
+  the existing temp-probes + output-cards body moves into <code>{% block content %}</code>. The big
+  inline <code>&lt;script&gt;</code> (WebSocket client + <code>setMode</code>) moves to <code>static/app.js</code>. The old
+  <code>&lt;header&gt;</code>/<code>&lt;footer&gt;</code>/clock/reload code is dropped (now provided by base).</li>
+<li><strong><code>system.html</code></strong> (new) — extends base; iterate <code>system_info.items()</code> into <code>.info-row</code>s +
+  a back-to-home <code>.btn</code> (preserving <code>?key=</code>).</li>
+<li><strong><code>config.html</code></strong> (new) — extends base; <code>config_path</code> in <code>.config-path</code>, contents in
+  <code>&lt;pre class="config-dump"&gt;</code>; back-to-home <code>.btn</code>.</li>
+</ul>
+<h3 id="4-static-static">4. Static (<code>static/</code>)</h3>
+<ul>
+<li><strong><code>styles.css</code></strong> — introduce CSS custom properties for the palette in three places
+  (light <code>:root</code>, <code>:root[data-theme="dark"]</code>, and
+  <code>@media (prefers-color-scheme: dark)</code> for <code>:root[data-theme="system"]</code> /
+  <code>:root:not([data-theme])</code>), then rewrite <strong>every</strong> hardcoded colour (header, cards,
+  tables, buttons, badges, reason text, footer) to reference the variables. Add the
+  header-nav rules (<code>.header-right</code>, <code>.header-link</code>, <code>#theme-toggle</code>) and the info-page
+  rules (<code>.info-page/.info-card/.info-row/.info-label/.info-value/.config-path/
+  .config-dump</code>, <code>.btn</code>, <code>#conn-status</code> online/offline). Preserve the existing
+  full/compact responsive data-table behaviour.</li>
+<li><strong><code>app.js</code></strong> (new) — the WebSocket client extracted from <code>index.html</code>:
+  connect/reconnect (<code>1008</code> close ⇒ stop + "unauthorized"; else "offline" + retry),
+  <code>applySnapshot</code> (temp probes + output cards, updating <code>#conn-status</code> + <code>#last-refresh</code>),
+  the <code>setMode</code> prompt/command flow (unchanged behaviour, incl. revert-minutes prompt),
+  and the <code>page_auto_refresh</code> reload from <code>window.__PAGE_AUTO_REFRESH__</code>. Reads the access
+  key from <code>window.__ACCESS_KEY__</code>. No-ops harmlessly on <code>/system</code> and <code>/config</code>.</li>
+</ul>
+<h2 id="test-verification">Test / verification</h2>
+<ul>
+<li>Existing <code>tests/test_webapp.py</code> must stay green (imports + <code>/</code> + <code>/ws</code> behaviour
+  unchanged; <code>WebAppNotifier</code> and <code>create_asgi_app</code> unchanged).</li>
+<li>Add coverage: <code>GET /system</code> → 200 and contains "Number of outputs"; <code>GET /config</code> → 200
+  and contains the config path; both enforce the access key (403 on wrong key).</li>
+<li><code>uv run ruff check src/ &amp;&amp; uv run ruff format src/</code> clean.</li>
+<li><code>uv run pytest</code> green.</li>
+<li>Manual: all three pages 200; header shows Clock → toggle → System → Config; toggle
+  cycles System → Light → Dark and persists; live WS updates + footer conn-status still
+  work; <code>?key=</code> preserved across nav when an access key is configured.</li>
+</ul>
+<h2 id="out-of-scope">Out of scope</h2>
+<ul>
+<li>Moving the web layer under <code>src/</code> (see Decisions).</li>
+<li>PowerControllerViewer / water-info (separate issues per the notes).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.expand"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
