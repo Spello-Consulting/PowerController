@@ -13,10 +13,13 @@ import asyncio
 import contextlib
 import json
 import os
+import platform
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import psutil
 import uvicorn
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
@@ -30,6 +33,8 @@ if TYPE_CHECKING:
     from threading import Event
 
     from sc_foundation import SCConfigManager, SCLogger
+    from starlette.responses import Response
+    from starlette.types import Scope
 
     from controller import PowerController
 
@@ -39,7 +44,9 @@ def _get_repo_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-def _validate_access_key(config: SCConfigManager, logger: SCLogger, key_from_request: str | None) -> bool:
+def _validate_access_key(
+    config: SCConfigManager, logger: SCLogger, key_from_request: str | None
+) -> bool:
     expected_key = os.environ.get("WEBAPP_ACCESS_KEY")
     if not expected_key:
         expected_key = config.get("Website", "AccessKey")
@@ -68,6 +75,42 @@ def _sanitize_mode(mode: Any) -> str | None:
     mode_s = mode.strip().lower()
     valid_modes = {m.value for m in AppMode}
     return mode_s if mode_s in valid_modes else None
+
+
+def _format_uptime(seconds: float) -> str:
+    """Format a boot-relative uptime as ``Xd Yh Zm``.
+
+    Args:
+        seconds: Seconds since boot.
+
+    Returns:
+        A human-readable uptime string (days/hours are omitted when zero).
+    """
+    total = int(seconds)
+    days, rem = divmod(total, 86400)
+    hours, rem = divmod(rem, 3600)
+    minutes = rem // 60
+    parts = []
+    if days:
+        parts.append(f"{days}d")
+    if hours or days:
+        parts.append(f"{hours}h")
+    parts.append(f"{minutes}m")
+    return " ".join(parts)
+
+
+class _NoCacheStaticFiles(StaticFiles):
+    """Static files served with ``Cache-Control: no-cache``.
+
+    Prevents browsers from serving a stale ``app.js``/``styles.css`` after an
+    update, which otherwise leads to hard-to-diagnose "my change isn't showing"
+    problems.
+    """
+
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
 
 
 @dataclass
@@ -140,7 +183,27 @@ def _configure_app_state(
     app.state.broadcast_task = None
 
 
-def _register_routes(app: FastAPI, controller: PowerController, config: SCConfigManager, logger: SCLogger, templates: Jinja2Templates, manager: ConnectionManager, notifier: WebAppNotifier) -> None:
+def _register_routes(
+    app: FastAPI,
+    controller: PowerController,
+    config: SCConfigManager,
+    logger: SCLogger,
+    templates: Jinja2Templates,
+    manager: ConnectionManager,
+    notifier: WebAppNotifier,
+) -> None:
+    def _page_auto_refresh() -> int:
+        refresh_raw = config.get("Website", "PageAutoRefresh", default=60)
+        try:
+            return int(refresh_raw or 0)  # pyright: ignore[reportArgumentType]
+        except (TypeError, ValueError):
+            return 60
+
+    def _app_label(global_data: dict[str, Any]) -> str:
+        return global_data.get("AppLabel") or config.get(
+            "General", "Label", default="PowerController"
+        )  # pyright: ignore[reportReturnType]
+
     @app.get("/", response_class=HTMLResponse)
     async def index(request: Request) -> Any:
         key = request.query_params.get("key")
@@ -152,12 +215,79 @@ def _register_routes(app: FastAPI, controller: PowerController, config: SCConfig
             logger.log_message("No web output data available yet", "warning")
             return HTMLResponse("no output data available yet", status_code=503)
 
+        global_data = snapshot.get("global", {})
         return templates.TemplateResponse(
             request,
-            "index.html",
+            "home.html",
             {
-                "global_data": snapshot.get("global", {}),
+                "app_label": _app_label(global_data),
+                "global_data": global_data,
                 "outputs": snapshot.get("outputs", {}),
+                "page_auto_refresh": _page_auto_refresh(),
+                "access_key": key or "",
+            },
+        )
+
+    @app.get("/system", response_class=HTMLResponse)
+    async def system(request: Request) -> Any:
+        key = request.query_params.get("key")
+        if not _validate_access_key(config, logger, key):
+            return HTMLResponse("Access forbidden.", status_code=403)
+
+        snapshot = await asyncio.to_thread(controller.get_webapp_data)
+        global_data = (snapshot or {}).get("global", {})
+        num_outputs = len((snapshot or {}).get("outputs", {}))
+
+        # cpu_percent with a short interval blocks; run it off the event loop.
+        cpu_percent = await asyncio.to_thread(psutil.cpu_percent, 0.3)
+        memory = psutil.virtual_memory()
+        uptime = time.time() - psutil.boot_time()
+
+        system_info = {
+            "Operating system": f"{platform.system()} {platform.release()}",
+            "Platform": platform.platform(),
+            "Architecture": platform.machine(),
+            "Hostname": platform.node(),
+            "Python version": platform.python_version(),
+            "Uptime": _format_uptime(uptime),
+            "Memory used": f"{memory.percent:.0f}%",
+            "CPU load": f"{cpu_percent:.0f}%",
+            "Number of outputs": num_outputs,
+        }
+        return templates.TemplateResponse(
+            request,
+            "system.html",
+            {
+                "app_label": _app_label(global_data),
+                "system_info": system_info,
+                "access_key": key or "",
+            },
+        )
+
+    @app.get("/config", response_class=HTMLResponse)
+    async def show_config(request: Request) -> Any:
+        key = request.query_params.get("key")
+        if not _validate_access_key(config, logger, key):
+            return HTMLResponse("Access forbidden.", status_code=403)
+
+        config_path = getattr(config, "config_path", None)
+        try:
+            config_text = (
+                config_path.read_text(encoding="utf-8")
+                if config_path
+                else "Config path unavailable."
+            )
+        except OSError as exc:
+            config_text = f"Could not read config file: {exc}"
+
+        return templates.TemplateResponse(
+            request,
+            "config.html",
+            {
+                "app_label": config.get("General", "Label", default="PowerController"),
+                "config_text": config_text,
+                "config_path": str(config_path) if config_path else "",
+                "access_key": key or "",
             },
         )
 
@@ -189,10 +319,23 @@ def _register_routes(app: FastAPI, controller: PowerController, config: SCConfig
                     output_id = msg.get("output_id")
                     mode = _sanitize_mode(msg.get("mode"))
                     revert_time_mins = msg.get("revert_time_mins")
-                    if not isinstance(output_id, str) or not controller.is_valid_output_id(output_id) or not mode:
+                    if (
+                        not isinstance(output_id, str)
+                        or not controller.is_valid_output_id(output_id)
+                        or not mode
+                    ):
                         # Ignore invalid commands; client will self-correct on next snapshot
                         continue
-                    controller.post_command(Command("set_mode", {"output_id": output_id, "mode": mode, "revert_time_mins": revert_time_mins}))
+                    controller.post_command(
+                        Command(
+                            "set_mode",
+                            {
+                                "output_id": output_id,
+                                "mode": mode,
+                                "revert_time_mins": revert_time_mins,
+                            },
+                        )
+                    )
                     notifier.notify()
         except WebSocketDisconnect:
             await manager.disconnect(ws)
@@ -200,7 +343,9 @@ def _register_routes(app: FastAPI, controller: PowerController, config: SCConfig
             await manager.disconnect(ws)
 
 
-def create_asgi_app(controller: PowerController, config: SCConfigManager, logger: SCLogger) -> tuple[FastAPI, WebAppNotifier]:
+def create_asgi_app(
+    controller: PowerController, config: SCConfigManager, logger: SCLogger
+) -> tuple[FastAPI, WebAppNotifier]:
     repo_root = _get_repo_root()
     templates = Jinja2Templates(directory=str(repo_root / "templates"))
     notifier = WebAppNotifier()
@@ -223,7 +368,9 @@ def create_asgi_app(controller: PowerController, config: SCConfigManager, logger
                             break
 
                     snapshot = await asyncio.to_thread(controller.get_webapp_data)
-                    await manager.broadcast_json({"type": "state_update", "state": snapshot})
+                    await manager.broadcast_json(
+                        {"type": "state_update", "state": snapshot}
+                    )
             except asyncio.CancelledError:
                 # Expected during shutdown.
                 return
@@ -240,8 +387,12 @@ def create_asgi_app(controller: PowerController, config: SCConfigManager, logger
 
     app = FastAPI(lifespan=_lifespan)
 
-    # Serve static assets at /static
-    app.mount("/static", StaticFiles(directory=str(repo_root / "static")), name="static")
+    # Serve static assets at /static (no-cache so updated CSS/JS isn't stale)
+    app.mount(
+        "/static",
+        _NoCacheStaticFiles(directory=str(repo_root / "static")),
+        name="static",
+    )
 
     _configure_app_state(app, controller, config, logger, templates, notifier, manager)
     _register_routes(app, controller, config, logger, templates, manager, notifier)
@@ -249,14 +400,18 @@ def create_asgi_app(controller: PowerController, config: SCConfigManager, logger
     return app, notifier
 
 
-def serve_asgi_blocking(app: FastAPI, config: SCConfigManager, logger: SCLogger, stop_event: Event):
+def serve_asgi_blocking(
+    app: FastAPI, config: SCConfigManager, logger: SCLogger, stop_event: Event
+):
     """Run an ASGI server in the current thread with cooperative shutdown using stop_event."""
     host_raw = config.get("Website", "HostingIP", default="127.0.0.1")
     host = host_raw if isinstance(host_raw, str) and host_raw else "127.0.0.1"
     port = int(config.get("Website", "Port", default=8080) or 8080)  # pyright: ignore[reportArgumentType]
 
     # Uvicorn log config can be noisy; keep our SCLogger as the source of truth.
-    uv_config = uvicorn.Config(app, host=host, port=port, log_level="warning", reload=False)
+    uv_config = uvicorn.Config(
+        app, host=host, port=port, log_level="warning", reload=False
+    )
     server = uvicorn.Server(uv_config)
     # Running under ThreadManager in a non-main thread: avoid installing signal handlers.
     server.install_signal_handlers = lambda: None  # type: ignore[method-assign]
@@ -269,7 +424,9 @@ def serve_asgi_blocking(app: FastAPI, config: SCConfigManager, logger: SCLogger,
 
         watcher = asyncio.create_task(_stop_watcher())
         try:
-            logger.log_message(f"Web server listening on http://{host}:{port}", "summary")
+            logger.log_message(
+                f"Web server listening on http://{host}:{port}", "summary"
+            )
             await server.serve()
         finally:
             watcher.cancel()

@@ -66,6 +66,7 @@ SAMPLE_WEBAPP_DATA = {
 # Helpers / fixtures
 # ---------------------------------------------------------------------------
 
+
 def _make_config(access_key: str | None = None):
     cfg = MagicMock()
 
@@ -119,6 +120,7 @@ def no_data_client(logger):
 # HTTP GET /
 # ---------------------------------------------------------------------------
 
+
 class TestIndexPage:
     def test_returns_200_or_503_when_no_key_required(self, client):
         resp = client.get("/")
@@ -151,8 +153,53 @@ class TestIndexPage:
 
 
 # ---------------------------------------------------------------------------
+# HTTP GET /system
+# ---------------------------------------------------------------------------
+
+
+class TestSystemPage:
+    def test_returns_200_and_shows_number_of_outputs(self, client):
+        resp = client.get("/system")
+        assert resp.status_code == 200
+        assert "Number of outputs" in resp.text
+
+    def test_forbidden_with_wrong_key(self, secured_client):
+        resp = secured_client.get("/system?key=wrong")
+        assert resp.status_code == 403
+
+    def test_allowed_with_correct_key(self, secured_client):
+        resp = secured_client.get("/system?key=webapp-secret")
+        assert resp.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# HTTP GET /config
+# ---------------------------------------------------------------------------
+
+
+class TestConfigPage:
+    def test_returns_200_and_shows_config_path(self, logger, tmp_path):
+        cfg_file = tmp_path / "config.yaml"
+        cfg_file.write_text("General:\n  Label: Test\n", encoding="utf-8")
+        cfg = _make_config(access_key=None)
+        cfg.config_path = cfg_file
+        ctrl = _make_controller()
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c:
+            resp = c.get("/config")
+            assert resp.status_code == 200
+            assert str(cfg_file) in resp.text
+            assert "Label: Test" in resp.text
+
+    def test_forbidden_with_wrong_key(self, secured_client):
+        resp = secured_client.get("/config?key=wrong")
+        assert resp.status_code == 403
+
+
+# ---------------------------------------------------------------------------
 # WebSocket /ws — initial snapshot
 # ---------------------------------------------------------------------------
+
 
 class TestWebSocketInitialSnapshot:
     def test_connects_and_receives_initial_snapshot(self, client):
@@ -180,9 +227,13 @@ class TestWebSocketInitialSnapshot:
 # WebSocket /ws — access key
 # ---------------------------------------------------------------------------
 
+
 class TestWebSocketAccessKey:
     def test_wrong_key_closes_with_policy_violation(self, secured_client):
-        with pytest.raises(Exception), secured_client.websocket_connect("/ws?key=wrong"):
+        with (
+            pytest.raises(Exception),
+            secured_client.websocket_connect("/ws?key=wrong"),
+        ):
             pass
 
     def test_correct_key_connects_successfully(self, logger):
@@ -203,6 +254,7 @@ class TestWebSocketAccessKey:
 # WebSocket /ws — command handling
 # ---------------------------------------------------------------------------
 
+
 class TestWebSocketCommands:
     def test_set_mode_auto_is_accepted(self, logger):
         ctrl = _make_controller()
@@ -210,13 +262,15 @@ class TestWebSocketCommands:
         app, _ = create_asgi_app(ctrl, cfg, logger)
         with TestClient(app) as c, c.websocket_connect("/ws") as ws:
             ws.receive_json()  # consume initial snapshot
-            ws.send_json({
-                "type": "command",
-                "action": "set_mode",
-                "output_id": "network_rack",
-                "mode": "auto",
-                "revert_time_mins": None,
-            })
+            ws.send_json(
+                {
+                    "type": "command",
+                    "action": "set_mode",
+                    "output_id": "network_rack",
+                    "mode": "auto",
+                    "revert_time_mins": None,
+                }
+            )
         # No reply expected - just verify post_command was called
         ctrl.post_command.assert_called_once()
         cmd = ctrl.post_command.call_args[0][0]
@@ -229,13 +283,15 @@ class TestWebSocketCommands:
         app, _ = create_asgi_app(ctrl, cfg, logger)
         with TestClient(app) as c, c.websocket_connect("/ws") as ws:
             ws.receive_json()
-            ws.send_json({
-                "type": "command",
-                "action": "set_mode",
-                "output_id": "network_rack",
-                "mode": "on",
-                "revert_time_mins": 60,
-            })
+            ws.send_json(
+                {
+                    "type": "command",
+                    "action": "set_mode",
+                    "output_id": "network_rack",
+                    "mode": "on",
+                    "revert_time_mins": 60,
+                }
+            )
         ctrl.post_command.assert_called_once()
         cmd = ctrl.post_command.call_args[0][0]
         assert cmd.payload["mode"] == "on"
@@ -248,12 +304,14 @@ class TestWebSocketCommands:
         app, _ = create_asgi_app(ctrl, cfg, logger)
         with TestClient(app) as c, c.websocket_connect("/ws") as ws:
             ws.receive_json()
-            ws.send_json({
-                "type": "command",
-                "action": "set_mode",
-                "output_id": "network_rack",
-                "mode": "invalid_mode",
-            })
+            ws.send_json(
+                {
+                    "type": "command",
+                    "action": "set_mode",
+                    "output_id": "network_rack",
+                    "mode": "invalid_mode",
+                }
+            )
         ctrl.post_command.assert_not_called()
 
     def test_invalid_output_id_ignored(self, logger):
@@ -263,12 +321,14 @@ class TestWebSocketCommands:
         app, _ = create_asgi_app(ctrl, cfg, logger)
         with TestClient(app) as c, c.websocket_connect("/ws") as ws:
             ws.receive_json()
-            ws.send_json({
-                "type": "command",
-                "action": "set_mode",
-                "output_id": "nonexistent_output",
-                "mode": "auto",
-            })
+            ws.send_json(
+                {
+                    "type": "command",
+                    "action": "set_mode",
+                    "output_id": "nonexistent_output",
+                    "mode": "auto",
+                }
+            )
         ctrl.post_command.assert_not_called()
 
     def test_malformed_json_ignored(self, logger):
@@ -287,18 +347,21 @@ class TestWebSocketCommands:
         app, _ = create_asgi_app(ctrl, cfg, logger)
         with TestClient(app) as c, c.websocket_connect("/ws") as ws:
             ws.receive_json()
-            ws.send_json({
-                "type": "other_type",
-                "action": "set_mode",
-                "output_id": "network_rack",
-                "mode": "auto",
-            })
+            ws.send_json(
+                {
+                    "type": "other_type",
+                    "action": "set_mode",
+                    "output_id": "network_rack",
+                    "mode": "auto",
+                }
+            )
         ctrl.post_command.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
 # WebAppNotifier
 # ---------------------------------------------------------------------------
+
 
 class TestWebAppNotifier:
     def test_notify_before_bind_does_not_raise(self):

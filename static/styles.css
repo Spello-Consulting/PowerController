@@ -1,25 +1,144 @@
 /* PowerController webapp styles */
 
+/* ── Theme tokens ──────────────────────────────────────────────────────────── */
+/* Light theme (default). */
+:root {
+  --bg: #f0f2f5;
+  --text: #1a1a2e;
+  --header: #16213e;
+  --header-text: #e0e0e0;
+  --header-border: #2c3a5e;
+  --clock: #b6c6de;
+  --card-bg: #ffffff;
+  --card-header-bg: #f8f9fb;
+  --line: #e8eaed;
+  --muted: #777777;
+  --output-title: #16213e;
+  --output-status: #555555;
+  --th-color: #777777;
+  --value-text: #1a1a2e;
+  --btn-bg: #ffffff;
+  --btn-border: #c8cdd5;
+  --btn-text: #333333;
+  --btn-hover-bg: #e8eaf0;
+  --btn-hover-border: #aab;
+  --btn-active-bg: #16213e;
+  --btn-active-text: #ffffff;
+  --btn-disabled-bg: #f0f1f4;
+  --btn-disabled-text: #aab;
+  --btn-disabled-border: #dde;
+  --btn-active-disabled-bg: #6b7280;
+  --btn-active-disabled-text: #e5e7eb;
+  --accent: #3d6fd6;
+  --badge-on-bg: #e6f9ee;
+  --badge-on-text: #007a33;
+  --badge-off-bg: #fde8e8;
+  --badge-off-text: #c0392b;
+  --conn-online: #1a9d4b;
+  --conn-offline: #e8890c;
+}
+
+/* Dark theme: applied when explicitly chosen. */
+:root[data-theme="dark"] {
+  --bg: #12151c;
+  --text: #e6eaf2;
+  --header: #0d1017;
+  --header-text: #e6eaf2;
+  --header-border: #2a3350;
+  --clock: #b6c6de;
+  --card-bg: #1b1f2a;
+  --card-header-bg: #232838;
+  --line: #2a2f3c;
+  --muted: #8a93a7;
+  --output-title: #e6eaf2;
+  --output-status: #a7b0c2;
+  --th-color: #8a93a7;
+  --value-text: #e6eaf2;
+  --btn-bg: #232838;
+  --btn-border: #3a4258;
+  --btn-text: #e6eaf2;
+  --btn-hover-bg: #2c3244;
+  --btn-hover-border: #4a5372;
+  --btn-active-bg: #3d6fd6;
+  --btn-active-text: #ffffff;
+  --btn-disabled-bg: #1a1e28;
+  --btn-disabled-text: #55606f;
+  --btn-disabled-border: #2a2f3c;
+  --btn-active-disabled-bg: #3a4258;
+  --btn-active-disabled-text: #8a93a7;
+  --accent: #6f9bef;
+  --badge-on-bg: #14361f;
+  --badge-on-text: #6fe39a;
+  --badge-off-bg: #3a1d1d;
+  --badge-off-text: #f19a94;
+  --conn-online: #4fd07a;
+  --conn-offline: #f0a742;
+}
+
+/* ... or when following the system preference (and not forced light). */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"],
+  :root:not([data-theme]) {
+    --bg: #12151c;
+    --text: #e6eaf2;
+    --header: #0d1017;
+    --header-text: #e6eaf2;
+    --header-border: #2a3350;
+    --clock: #b6c6de;
+    --card-bg: #1b1f2a;
+    --card-header-bg: #232838;
+    --line: #2a2f3c;
+    --muted: #8a93a7;
+    --output-title: #e6eaf2;
+    --output-status: #a7b0c2;
+    --th-color: #8a93a7;
+    --value-text: #e6eaf2;
+    --btn-bg: #232838;
+    --btn-border: #3a4258;
+    --btn-text: #e6eaf2;
+    --btn-hover-bg: #2c3244;
+    --btn-hover-border: #4a5372;
+    --btn-active-bg: #3d6fd6;
+    --btn-active-text: #ffffff;
+    --btn-disabled-bg: #1a1e28;
+    --btn-disabled-text: #55606f;
+    --btn-disabled-border: #2a2f3c;
+    --btn-active-disabled-bg: #3a4258;
+    --btn-active-disabled-text: #8a93a7;
+    --accent: #6f9bef;
+    --badge-on-bg: #14361f;
+    --badge-on-text: #6fe39a;
+    --badge-off-bg: #3a1d1d;
+    --badge-off-text: #f19a94;
+    --conn-online: #4fd07a;
+    --conn-offline: #f0a742;
+  }
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
+  background: var(--bg);
+  color: var(--text);
   margin: 0;
-  padding: 0 0 2rem;
+  padding: 0 0 2.5rem;
 }
 
+/* ── Header / menu bar ─────────────────────────────────────────────────────── */
+
 header {
-  background: #16213e;
-  color: #e0e0e0;
+  background: var(--header);
+  color: var(--header-text);
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 header h1 {
@@ -29,23 +148,38 @@ header h1 {
   letter-spacing: 0.03em;
 }
 
+header h1 a { color: var(--header-text); text-decoration: none; }
+
+.header-right { display: flex; align-items: center; gap: 0.8rem; }
+
 #clock {
   font-size: 1rem;
   font-variant-numeric: tabular-nums;
-  color: #b6c6de;
+  color: var(--clock);
   letter-spacing: 0.05em;
 }
 
-#page-footer {
-  margin: 1.5rem 1rem 0.5rem;
-  font-size: 0.8rem;
-  color: #aaa;
+.header-link {
+  color: var(--header-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-family: inherit;
+  line-height: 1.4;
+  background: transparent;
+  border: 1px solid var(--header-border);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
 }
+.header-link:hover { background: var(--header-border); }
+#theme-toggle { min-width: 2.2rem; text-align: center; font-size: 1rem; line-height: 1.2; }
+
+main { display: block; }
 
 /* ── Cards ─────────────────────────────────────────────────────────────────── */
 
 .card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.10);
   margin: 0.75rem 1rem;
@@ -57,8 +191,8 @@ header h1 {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  background: #f8f9fb;
-  border-bottom: 1px solid #e8eaed;
+  background: var(--card-header-bg);
+  border-bottom: 1px solid var(--line);
   gap: 0.75rem;
   flex-wrap: wrap;
 }
@@ -74,7 +208,7 @@ header h1 {
 .output-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #16213e;
+  color: var(--output-title);
 }
 
 .output-status {
@@ -82,13 +216,13 @@ header h1 {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: #555;
+  color: var(--output-status);
   flex-wrap: wrap;
 }
 
 .mode-display {
   font-weight: 600;
-  color: #16213e;
+  color: var(--output-title);
 }
 
 .output-reason {
@@ -114,8 +248,8 @@ header h1 {
   flex-shrink: 0;
 }
 
-.status-badge.on  { background: #e6f9ee; color: #007a33; }
-.status-badge.off { background: #fde8e8; color: #c0392b; }
+.status-badge.on  { background: var(--badge-on-bg); color: var(--badge-on-text); }
+.status-badge.off { background: var(--badge-off-bg); color: var(--badge-off-text); }
 
 /* ── Mode buttons ──────────────────────────────────────────────────────────── */
 
@@ -127,10 +261,10 @@ header h1 {
 
 .mode-button {
   padding: 0.35rem 0.8rem;
-  border: 1px solid #c8cdd5;
+  border: 1px solid var(--btn-border);
   border-radius: 4px;
-  background: #fff;
-  color: #333;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-size: 0.82rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -138,39 +272,39 @@ header h1 {
 }
 
 .mode-button:hover {
-  background: #e8eaf0;
-  border-color: #aab;
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
 }
 
 .mode-button.active {
-  background: #16213e;
-  color: #fff;
-  border-color: #16213e;
+  background: var(--btn-active-bg);
+  color: var(--btn-active-text);
+  border-color: var(--btn-active-bg);
 }
 
 .mode-button:disabled {
-  background: #f0f1f4;
-  color: #aab;
-  border-color: #dde;
+  background: var(--btn-disabled-bg);
+  color: var(--btn-disabled-text);
+  border-color: var(--btn-disabled-border);
   cursor: not-allowed;
 }
 
 .mode-button:disabled:hover {
-  background: #f0f1f4;
-  border-color: #dde;
+  background: var(--btn-disabled-bg);
+  border-color: var(--btn-disabled-border);
 }
 
 .mode-button.active:disabled {
-  background: #6b7280;
-  color: #e5e7eb;
-  border-color: #6b7280;
+  background: var(--btn-active-disabled-bg);
+  color: var(--btn-active-disabled-text);
+  border-color: var(--btn-active-disabled-bg);
 }
 
 /* ── Reason text ───────────────────────────────────────────────────────────── */
 
 .reason-text {
   font-size: 0.78rem;
-  color: #777;
+  color: var(--muted);
   font-style: italic;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -188,7 +322,7 @@ header h1 {
 .data-table-label {
   text-align: left;
   padding: 0.18rem 0.4rem 0.18rem 0;
-  color: #777;
+  color: var(--th-color);
   font-size: 0.78rem;
   font-weight: 500;
   white-space: nowrap;
@@ -197,12 +331,75 @@ header h1 {
 .data-table-value {
   padding: 0.18rem 1.5rem 0.18rem 0;
   font-size: 0.85rem;
-  color: #1a1a2e;
+  color: var(--value-text);
   white-space: nowrap;
 }
 
 .data-table.full   { display: table; }
 .data-table.compact { display: none; }
+
+/* ── Info pages (system / config) ──────────────────────────────────────────── */
+
+.info-page { padding: 0 1rem 1rem; max-width: 760px; margin: 0 auto; }
+.info-page h2 { margin-top: 0.5rem; }
+.info-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--muted); }
+.info-value { font-variant-numeric: tabular-nums; text-align: right; }
+.config-path { color: var(--muted); font-size: 0.85rem; word-break: break-all; }
+.config-dump {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  white-space: pre;
+}
+.btn {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(1.08); }
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+
+#page-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--header);
+  color: var(--header-text);
+  border-top: 1px solid var(--header-border);
+  padding: 0.4rem 1rem;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.conn-online { color: var(--conn-online); font-weight: 600; }
+.conn-offline { color: var(--conn-offline); font-weight: 600; }
 
 /* ── Responsive ────────────────────────────────────────────────────────────── */
 

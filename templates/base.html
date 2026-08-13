@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ app_label }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+    (function () {
+      var t = localStorage.getItem("theme") || "system";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <h1><a href="/{% if access_key %}?key={{ access_key }}{% endif %}">{{ app_label }}</a></h1>
+    <nav class="header-right">
+      <span id="clock" aria-label="current time"></span>
+      <button id="theme-toggle" class="header-link" type="button" title="Toggle light / dark / system theme"></button>
+      <a class="header-link" href="/system{% if access_key %}?key={{ access_key }}{% endif %}">System</a>
+      <a class="header-link" href="/config{% if access_key %}?key={{ access_key }}{% endif %}">Config</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer id="page-footer">
+    <span id="conn-status" class="conn-offline">connecting…</span>
+    &nbsp;|&nbsp; Last refresh: <span id="last-refresh">—</span>
+  </footer>
+
+  <script>
+    window.__ACCESS_KEY__ = {{ (access_key or "") | tojson }};
+    window.__PAGE_AUTO_REFRESH__ = {{ (page_auto_refresh or 0) | tojson }};
+  </script>
+  <script src="/static/app.js"></script>
+  <script>
+    function updateClock() {
+      var el = document.getElementById('clock');
+      if (el) { el.textContent = new Date().toTimeString().slice(0, 8); }
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Theme toggle: cycles System -> Light -> Dark and persists the choice.
+    (function () {
+      var order = ["system", "light", "dark"];
+      var icons = { system: "🖥️", light: "☀️", dark: "🌙" };
+      var titles = {
+        system: "Theme: System (click for Light)",
+        light: "Theme: Light (click for Dark)",
+        dark: "Theme: Dark (click for System)",
+      };
+      var btn = document.getElementById("theme-toggle");
+      if (!btn) return;
+
+      function current() {
+        return localStorage.getItem("theme") || "system";
+      }
+      function apply(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        btn.textContent = icons[theme];
+        btn.setAttribute("title", titles[theme]);
+        btn.setAttribute("aria-label", titles[theme]);
+      }
+      apply(current());
+      btn.addEventListener("click", function () {
+        var next = order[(order.indexOf(current()) + 1) % order.length];
+        apply(next);
+      });
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

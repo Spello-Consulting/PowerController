@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Config · {{ app_label }}{% endblock %}
+
+{% block content %}
+<div class="info-page">
+  <h2>Configuration file</h2>
+  {% if config_path %}<p class="config-path">{{ config_path }}</p>{% endif %}
+  <pre class="config-dump">{{ config_text }}</pre>
+  <p><a class="btn" href="/{% if access_key %}?key={{ access_key }}{% endif %}">← Back to home</a></p>
+</div>
+{% endblock %}
