@@ -25,7 +25,7 @@ jobs:
 
       - name: Pull latest from GitHub
         run: |
-          sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/gitrefresh.sh --yes
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/gitrefresh.sh --yes
 
       - name: Deploy and start the service
         run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy sydneyapp
