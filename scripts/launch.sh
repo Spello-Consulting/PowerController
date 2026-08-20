@@ -108,6 +108,26 @@ if [ -z "${_LAUNCH_OP_INJECTED:-}" ] && [ -f "$EnvTemplate" ]; then
     rm -f "$HomeDir/.env"
   fi
 
+  # Wait for DNS before op runs. Scheduled jobs (launchd/systemd/cron) often
+  # fire the instant the machine wakes, before the OS resolver is back, so op's
+  # first call fails with "no such host". Probe the OS resolver directly — the
+  # same path op resolves through — via fixed-path system tools, so this needs
+  # neither python3 nor uv on PATH. macOS: dscacheutil exits 0 even on a miss,
+  # so match an address in its output. Linux: getent exits non-zero on a miss.
+  op_host="my.1password.com"
+  _dns_ready() {
+    if [ "$(uname -s)" = "Darwin" ]; then
+      /usr/bin/dscacheutil -q host -a name "$1" 2>/dev/null | grep -q ip_address
+    else
+      getent ahosts "$1" >/dev/null 2>&1
+    fi
+  }
+  for attempt in $(seq 1 6); do
+    _dns_ready "$op_host" && break
+    echo "[workflow] Network/DNS not ready (attempt $attempt), waiting 5s ..." >&2
+    sleep 5
+  done
+
   echo "[launcher] Injecting secrets from $EnvTemplate via 'op run' and re-exec'ing ..."
   export _LAUNCH_OP_INJECTED=1
   exec op run --env-file="$EnvTemplate" -- "$SelfPath" "$@"
