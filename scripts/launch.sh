@@ -9,6 +9,7 @@ Requires Python and UV to be installed
 1/8/2026: Add support for 1Password op / build .env file
 1/8/2026: Re-exec through `op run` to inject secrets into the environment
           in-memory (no plaintext .env written to disk).
+20/8/2026: Add APP_ENV guard to ensure .env.target is valid and APP_ENV is set. Does uv sync --extra all in dev environment.
 =========================================================='
 
 # set -euo pipefail
@@ -149,9 +150,11 @@ fi
 # (development or production). Refuse to run if it is missing — that means no
 # template was resolved (.env.target absent or dangling); we must never run
 # without knowing which environment we're in.
-if [ -z "${APP_ENV:-}" ]; then
-  echo "[launcher] Error: APP_ENV is not set — refusing to run. Ensure .env.target points to .env.dev.template or .env.prod.template." >&2
-  exit 1
+if [ -f "$EnvTemplate" ] || [ -f "$EnvFile" ]; then
+  if [ -z "${APP_ENV:-}" ]; then
+    echo "[launcher] Error: APP_ENV is not set — refusing to run. Ensure .env.target points to .env.dev.template or .env.prod.template." >&2
+    exit 1
+  fi
 fi
 if [ "$APP_ENV" = "development" ]; then
   echo "[launcher] WARNING: APP_ENV=development — running with development settings." >&2
@@ -203,9 +206,16 @@ if [ -n "${APP_CONFIG:-}" ]; then
 fi
 
 # Make sure deps are synced before starting
-if ! "$UVCmd" sync; then
-  echo "[launcher] uv sync failed — not starting app." >&2
-  exit 2
+if [ "$APP_ENV" = "development" ]; then
+  if ! "$UVCmd" sync --extra all; then
+    echo "[launcher] uv sync failed — not starting app." >&2
+    exit 2
+  fi
+else
+  if ! "$UVCmd" sync; then
+    echo "[launcher] uv sync failed — not starting app." >&2
+    exit 2
+  fi
 fi
 
 # Hand off to the app with `exec`, replacing this launcher shell with uv (and,

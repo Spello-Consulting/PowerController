@@ -3,7 +3,7 @@
 
 # Python
 __pycache__/
-.DS_Store
+**/.DS_Store
 .python-version
 .ruff_cache/
 .venv/
