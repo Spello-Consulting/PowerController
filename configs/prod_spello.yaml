@@ -124,7 +124,7 @@ Outputs:
   - Name: Irrigation
     DeviceOutput: "Irrigation Pump"
     Mode: Schedule
-    Disable: False
+    Disable: True
     Schedule: Irrigation
     DaysOfHistory: 14
     TargetHours: -1
