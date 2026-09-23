@@ -67,60 +67,60 @@ SCSmartDevices:
 
 # Configure the outputs for your devices and how they behave
 Outputs:
-  - Name: Pool Pump
-    DeviceOutput: "Pool Pump"
-    Mode: Schedule
-    Schedule: Pool Cleaning
-    DaysOfHistory: 14
-    MinHours: 2
-    MaxHours: 7
-    TargetHours: 6
-    MaxShortfallHours: 0
-    MaxBestPrice: 30.0
-    MaxPriorityPrice: 35.0
-    DeviceMeter: Pool Pump Meter
-    MaxDailyEnergyUse: 1300
-    MaxAppOnTime: 60
-    MaxAppOffTime: 60
-    HideFromTempProbesSummary: True
-  - Name: Chlorinator
-    DeviceOutput: "Chlorinator"
-    Mode: Schedule
-    Schedule: Chlorinator
-    DaysOfHistory: 14
-    TargetHours: 4
-    MinHours: 2
-    MaxHours: 7
-    MaxShortfallHours: 0
-    MaxBestPrice: 30.0
-    MaxPriorityPrice: 35.0
-    DeviceMeter: Chlorinator Meter
-    ParentOutput: Pool Pump
-    MinDailyEnergyUse: 150
-    MaxAppOnTime: 60
-    MaxAppOffTime: 60
-    HideFromTempProbesSummary: True    
-  - Name: Heating Pump
-    DeviceOutput: "Heating Pump"
-    Mode: Schedule
-    Schedule: Pool Solar
-    WeatherConstraint:
-      SkyCondition: cloudy, overcast, drizzle, rain, snow, thunderstorm
-      TemperatureBelow: 23.0
-      PrecipitationProbabilityAbove: 0.3
-      ActionIfMatch: TurnOff
-    DaysOfHistory: 14
-    TargetHours: 6
-    MinHours: 2
-    MaxHours: 7
-    MaxShortfallHours: 0
-    MaxBestPrice: 30.0
-    MaxPriorityPrice: 35.0    
-    DeviceMeter: Heating Pump Meter
-    ParentOutput: Pool Pump
-    MaxAppOnTime: 60
-    MaxAppOffTime: 60
-    HideFromTempProbesSummary: True
+  # - Name: Pool Pump
+  #   DeviceOutput: "Pool Pump"
+  #   Mode: Schedule
+  #   Schedule: Pool Cleaning
+  #   DaysOfHistory: 14
+  #   MinHours: 2
+  #   MaxHours: 7
+  #   TargetHours: 6
+  #   MaxShortfallHours: 0
+  #   MaxBestPrice: 30.0
+  #   MaxPriorityPrice: 35.0
+  #   DeviceMeter: Pool Pump Meter
+  #   MaxDailyEnergyUse: 1300
+  #   MaxAppOnTime: 60
+  #   MaxAppOffTime: 60
+  #   HideFromTempProbesSummary: True
+  # - Name: Chlorinator
+  #   DeviceOutput: "Chlorinator"
+  #   Mode: Schedule
+  #   Schedule: Chlorinator
+  #   DaysOfHistory: 14
+  #   TargetHours: 4
+  #   MinHours: 2
+  #   MaxHours: 7
+  #   MaxShortfallHours: 0
+  #   MaxBestPrice: 30.0
+  #   MaxPriorityPrice: 35.0
+  #   DeviceMeter: Chlorinator Meter
+  #   ParentOutput: Pool Pump
+  #   MinDailyEnergyUse: 150
+  #   MaxAppOnTime: 60
+  #   MaxAppOffTime: 60
+  #   HideFromTempProbesSummary: True    
+  # - Name: Heating Pump
+  #   DeviceOutput: "Heating Pump"
+  #   Mode: Schedule
+  #   Schedule: Pool Solar
+  #   WeatherConstraint:
+  #     SkyCondition: cloudy, overcast, drizzle, rain, snow, thunderstorm
+  #     TemperatureBelow: 23.0
+  #     PrecipitationProbabilityAbove: 0.3
+  #     ActionIfMatch: TurnOff
+  #   DaysOfHistory: 14
+  #   TargetHours: 6
+  #   MinHours: 2
+  #   MaxHours: 7
+  #   MaxShortfallHours: 0
+  #   MaxBestPrice: 30.0
+  #   MaxPriorityPrice: 35.0    
+  #   DeviceMeter: Heating Pump Meter
+  #   ParentOutput: Pool Pump
+  #   MaxAppOnTime: 60
+  #   MaxAppOffTime: 60
+  #   HideFromTempProbesSummary: True
   - Name: Irrigation
     DeviceOutput: "Irrigation Pump"
     Mode: Schedule
