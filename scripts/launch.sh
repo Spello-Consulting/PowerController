@@ -1,4 +1,10 @@
 #!/bin/bash
+# >>>>> pyutil-managed >>>>>
+# Managed by pyutil — do not edit this copy.
+# Source of truth: pyutil/launch.sh — edit there, then run pyutil/distribute.sh.
+# Updates refuse to overwrite local edits unless --force is used.
+# pyutil-source-sha256: 65ae9c7b03e4f3756e49517947cd12e935c74d785d1bb3b19576bfb5db905eaf
+# <<<<< pyutil-managed <<<<<
 : '=======================================================
 Application Launcher
 
@@ -10,6 +16,9 @@ Requires Python and UV to be installed
 1/8/2026: Re-exec through `op run` to inject secrets into the environment
           in-memory (no plaintext .env written to disk).
 20/8/2026: Add APP_ENV guard to ensure .env.target is valid and APP_ENV is set. Does uv sync --extra all in dev environment.
+24/9/2026: Security fix (#11): unset OP_SERVICE_ACCOUNT_TOKEN (and OP_BIOMETRIC_UNLOCK_ENABLED)
+           on the second pass, so the 1Password service-account token is not inherited by
+           uv sync or the application process. Only the materialised op:// secrets remain.
 =========================================================='
 
 # set -euo pipefail
@@ -132,6 +141,17 @@ if [ -z "${_LAUNCH_OP_INJECTED:-}" ] && [ -f "$EnvTemplate" ]; then
   echo "[launcher] Injecting secrets from $EnvTemplate via 'op run' and re-exec'ing ..."
   export _LAUNCH_OP_INJECTED=1
   exec op run --env-file="$EnvTemplate" -- "$SelfPath" "$@"
+fi
+
+# Second pass (reached via the re-exec above): the op:// references have been
+# resolved into the environment, but `op run` also passes through the
+# service-account token we exported on the first pass. That token can read every
+# item the service account can see — far more than the handful of op:// refs this
+# app needs — so drop it (and the biometric-unlock toggle that only mattered while
+# authenticating op) before uv sync and the app run. After this, only the
+# individual materialised secrets remain in the environment. See issue #11.
+if [ -n "${_LAUNCH_OP_INJECTED:-}" ]; then
+  unset OP_SERVICE_ACCOUNT_TOKEN OP_BIOMETRIC_UNLOCK_ENABLED
 fi
 
 # Second pass (secrets already injected above), or no template at all: also load

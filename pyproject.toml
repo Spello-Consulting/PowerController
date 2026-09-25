@@ -42,6 +42,9 @@ all = [
     "powercontroller[dev,teslamate]",
 ]
 
+[tool.pyutil]
+managed_scripts = ["launch.sh"]
+
 [tool.uv.sources]
 org-enums = { git = "https://github.com/Spello-Consulting/org_enums", rev = "main" }
 
