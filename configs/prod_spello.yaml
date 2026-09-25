@@ -174,7 +174,7 @@ ViewerWebsite:
 HeartbeatMonitor:
   # The URL of the website to monitor for availability
   Enable: True
-  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/go1NRKbhTBwYcQKMn4Cfh1cj
+  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/GmJNdkYFxurqCX6pmA2KiwZT
   # How long to wait for a response from the website before considering it down in seconds
   HeartbeatTimeout: 5
   # How often to post the state to the heartbeat monitor (in seconds)
