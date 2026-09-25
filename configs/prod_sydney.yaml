@@ -215,7 +215,7 @@ Outputs:
     TargetHours: -1
     DatesOff:
       - StartDate: 2026-05-12
-        EndDate: 2026-10-01
+        EndDate: 2026-09-24
     MaxBestPrice: 15.0
     MaxPriorityPrice: 20.0
     DeviceMeter: Hot Water M1
