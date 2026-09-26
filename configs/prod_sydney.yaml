@@ -219,7 +219,7 @@ Outputs:
     MaxBestPrice: 15.0
     MaxPriorityPrice: 20.0
     DeviceMeter: Hot Water M1
-    HideFromWebApp: True
+    HideFromWebApp: False
     HideFromViewerApp: False
   - Name: Tesla
     Type: teslamate
