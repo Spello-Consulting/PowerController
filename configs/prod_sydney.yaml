@@ -178,7 +178,7 @@ Outputs:
     MaxAppOffTime: 60
     DatesOff:
       - StartDate: 2026-04-01
-        EndDate: 2026-10-31
+        EndDate: 2026-09-29
     TempProbeConstraints:
       - TempProbe: Temp Roof
         Condition: GreaterThan
