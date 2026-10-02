@@ -3,7 +3,7 @@
 # Managed by pyutil — do not edit this copy.
 # Source of truth: pyutil/launch.sh — edit there, then run pyutil/distribute.sh.
 # Updates refuse to overwrite local edits unless --force is used.
-# pyutil-source-sha256: 65ae9c7b03e4f3756e49517947cd12e935c74d785d1bb3b19576bfb5db905eaf
+# pyutil-source-sha256: 6f8b2f34f5e7ca21a1850d08b97a012dd06e94762df1c784cc6606655f6e7564
 # <<<<< pyutil-managed <<<<<
 : '=======================================================
 Application Launcher
@@ -19,26 +19,64 @@ Requires Python and UV to be installed
 24/9/2026: Security fix (#11): unset OP_SERVICE_ACCOUNT_TOKEN (and OP_BIOMETRIC_UNLOCK_ENABLED)
            on the second pass, so the 1Password service-account token is not inherited by
            uv sync or the application process. Only the materialised op:// secrets remain.
+2/10/2026: Add --help usage output and --launch <module> to override launch_path from pyproject.toml.
 =========================================================='
 
 # set -euo pipefail
 
 PYPROJECT="pyproject.toml"
 
-# Parse --homedir argument from any position; default to the directory containing pyproject.toml
+# --help may appear anywhere; print usage and exit before any side effects (cd, op, uv sync).
+for arg in "$@"; do
+  if [ "$arg" = "--help" ] || [ "$arg" = "-h" ]; then
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [options]
+
+Options:
+  --homedir <dir>     Directory containing $PYPROJECT (default: this script's directory, or its parent).
+  --launch <module>   Python module/script to run, overriding launch_path from $PYPROJECT.
+  --config <path>     Config file path, forwarded to the app (also settable via APP_CONFIG).
+  --help, -h           Show this help message and exit.
+
+Any other options are passed through unchanged to the launched application.
+EOF
+    exit 0
+  fi
+done
+
+# Parse --homedir/--launch arguments from any position; default HomeDir to the directory containing pyproject.toml
 ScriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Absolute path to this script, so we can safely re-exec ourselves regardless of cwd.
 SelfPath="$ScriptDir/$(basename "${BASH_SOURCE[0]}")"
 HomeDir=""
+LaunchOverride=""
+# --launch is a launcher-only flag, so strip it (and its value) from "$@" here — the
+# app never sees it. --homedir is left in place, matching existing behaviour.
+RemainingArgs=()
+skip_next=false
 for ((i=1; i<=$#; i++)); do
-  if [ "${!i}" = "--homedir" ]; then
+  arg="${!i}"
+  if $skip_next; then
+    skip_next=false
+    continue
+  fi
+  if [ "$arg" = "--homedir" ]; then
     j=$((i+1))
     if [ $j -le $# ]; then
       HomeDir="${!j}"
-      break
     fi
+    RemainingArgs+=("$arg")
+  elif [ "$arg" = "--launch" ]; then
+    j=$((i+1))
+    if [ $j -le $# ]; then
+      LaunchOverride="${!j}"
+      skip_next=true
+    fi
+  else
+    RemainingArgs+=("$arg")
   fi
 done
+set -- "${RemainingArgs[@]}"
 
 # If --homedir was not provided, locate the directory containing pyproject.toml
 if [ -z "$HomeDir" ]; then
@@ -180,8 +218,10 @@ if [ "$APP_ENV" = "development" ]; then
   echo "[launcher] WARNING: APP_ENV=development — running with development settings." >&2
 fi
 
-# Get the script name from pyproject.toml
-if [ -f "$PYPROJECT" ]; then
+# Get the script name from pyproject.toml, unless overridden with --launch
+if [ -n "$LaunchOverride" ]; then
+  ScriptName="$LaunchOverride"
+elif [ -f "$PYPROJECT" ]; then
   ScriptName=$(grep -E '^launch_path *= *"' "$PYPROJECT" | head -1 | sed -E 's/^launch_path *= *"([^"]+)".*$/\1/')
 else
   echo "Error: $PYPROJECT not found."
