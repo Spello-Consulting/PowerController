@@ -1530,6 +1530,7 @@ class PowerController:
                 "Meters": [],
                 "TempProbes": [],
                 "EnergyPrices": {},
+                "UPS": [],
                 "LastRefresh": None,
             }
             self._data_api_next_refresh = DateHelper.now()
@@ -1548,6 +1549,7 @@ class PowerController:
             "Meters": [],
             "TempProbes": [],
             "EnergyPrices": {},
+            "UPS": [],
             "LastRefresh": DateHelper.now(),
         }
 
@@ -1623,6 +1625,9 @@ class PowerController:
                                                             number_of_intervals=pricing_cfg.get("NumIntervals", 12),
                                                             price_warning=pricing_cfg.get("WarningPrice"),
                                                             price_critical=pricing_cfg.get("CriticalPrice"))
+
+        # Get the UPS data
+        return_data["UPS"] = self.ups_integration.get_dataapi_data()
 
         # Now build up the JSON ready data dict that we will cache and return for API calls
         return_data_json = JSONEncoder.ready_dict_for_json(return_data)  # pyright: ignore[reportReturnType]

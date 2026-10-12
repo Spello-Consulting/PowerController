@@ -349,3 +349,20 @@ class UPSIntegration:
         csv_reader.update_csv_file(ups_data, max_days=max_days)
 
         # self.logger.log_message(f"Wrote UPS data to CSV file '{self.data_file['file_name']}'", "debug")
+
+    def get_dataapi_data(self) -> list[dict]:
+        """Get UPS data formatted for the data API."""
+        ups_data = []
+        for ups in self.ups_list:
+            if ups["battery_state"] is None or ups["battery_state"] == "unknown":
+                continue
+
+            ups_data.append({
+                "Timestamp": ups["timestamp"],
+                "UPSName": ups["name"],
+                "BatteryChargePercent": ups["battery_charge_percent"],
+                "BatteryRuntimeSeconds": ups["battery_runtime_seconds"],
+                "BatteryState": ups["battery_state"],
+                "IsHealthy": ups["is_healthy"],
+            })
+        return ups_data
