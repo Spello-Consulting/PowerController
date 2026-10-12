@@ -195,7 +195,7 @@ def create_asgi_app(controller: PowerController, config: SCConfigManager, logger
         if not _validate_access_key(config, logger, key):
             raise HTTPException(status_code=401, detail="Unauthorized: Invalid or missing access key")
 
-        data = await asyncio.to_thread(controller.get_api_data, "ups")
+        data = await asyncio.to_thread(controller.get_api_data, "UPS")
         if not data:
             raise HTTPException(status_code=503, detail="API data not available")
         return JSONResponse(content=data)
