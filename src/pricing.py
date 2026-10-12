@@ -763,6 +763,14 @@ class PricingManager:
         for entry in response_data:
             dt_start = self._convert_utc_dt_string(entry["startTime"])
             dt_end = self._convert_utc_dt_string(entry["endTime"])
+            # For forecast price spikes, Amber may include an advancedPrice object. When present, its
+            # "predicted" value better matches the price shown on the Amber customer website, so prefer
+            # it over perKwh (see issue #111).
+            advanced_price = entry.get("advancedPrice")
+            if isinstance(advanced_price, dict) and advanced_price.get("predicted") is not None:
+                price = float(advanced_price["predicted"])
+            else:
+                price = float(entry["perKwh"])
             new_entry = {
                 "Date": dt_start.date(),
                 "Channel": entry["channelType"],
@@ -771,7 +779,7 @@ class PricingManager:
                 "EndTime": dt_end.time(),
                 "EndDateTime": dt_end,
                 "Minutes": int(entry["duration"]),  # Duration of this slot in minutes
-                "Price": float(entry["perKwh"]),
+                "Price": price,
                 "IsForecast": entry.get("type") == "ForecastInterval",
             }
             price_data.append(new_entry)

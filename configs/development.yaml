@@ -27,9 +27,9 @@ HeartbeatMonitor:
 
 
 AmberAPI:
-  Mode: Disabled
+  Mode: Live
   APIURL: https://api.amber.com.au/v1
-  RefreshInterval: 30
+  RefreshInterval: 5
   UsageDataFile: logs/amber_usage_data.csv
   PricesCacheFile: logs/latest_prices.json
 
@@ -106,3 +106,14 @@ OperatingSchedules:
         # Price: 15
 
 
+DataAPI:
+  Enable: True
+  HostingIP: 0.0.0.0
+  Port: 8081
+  RefreshInterval: 0
+  EnergyPrices:
+    AmberChannel: general
+    IntervalTime: 30
+    NumIntervals: 24
+    WarningPrice: 40.0
+    CriticalPrice: 60.0
