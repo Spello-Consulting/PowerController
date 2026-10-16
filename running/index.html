@@ -1435,6 +1435,14 @@ AmberAPI: RefreshInterval - max value is 30
 <p>(Note: For debug testing, it's possible to <a href="https://spello-consulting.github.io/sc-foundation/reference/datehelper/#freeze-time-feature">freeze the system time</a> used by the app, but this shoudld only be used for development testing.)</p>
 <h2 id="web-interface">Web Interface</h2>
 <p>PowerController includes a realtime web interface that you can use to view the status of each output and where appropriate, override it's state. The webapp is configured using the Website: section in the config file. If enabled, you can access this at http://192.168.1.20:8080 (change 192.168.1.20 to the IP of your machine)</p>
+<p>The web app has these pages:</p>
+<ul>
+<li><strong>Home</strong> (<code>/</code>) — the current state of each output, with mode overrides.</li>
+<li><strong>System</strong> (<code>/system</code>) — the application version (from <code>pyproject.toml</code>), git branch, status (ahead/behind upstream, based on the last fetch) and count of uncommitted changes, plus basic OS information. Git rows are omitted when the app isn't running from a git checkout. A <strong>Logs</strong> button opens the log viewer.</li>
+<li><strong>Log</strong> (<code>/log</code>) — the full contents of the application log file (<code>Files: LogfileName</code>). Tick <strong>Live updates</strong> to follow new lines as they are written (like <code>tail -f</code>, polled every second; the choice is remembered per browser), and use <strong>Download</strong> to save a copy.</li>
+<li><strong>Config</strong> (<code>/config</code>) — the raw contents of the active YAML config file.</li>
+</ul>
+<p>All pages, including the <code>/log/content</code> and <code>/log/download</code> endpoints, are protected by the web app access key if one is configured.</p>
 <p>We recommend that you only expose the PowerController web app to your local network. If you want remote acces, we recommend providing a secure read-only view via the PowerController Viewer app.</p>
 <h2 id="powercontroller-viewer-app">PowerController Viewer App</h2>
 <p>There is also a companion web application (PowerControllerViewer) that can be used to monitor the state and history of multiple Power Controller installations. See <a href="https://github.com/Spello-Consulting/PowerControllerViewer">PowerControllerViewer</a> for more information on how to install and run this.</p>
