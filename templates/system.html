@@ -10,6 +10,9 @@
     <div class="info-row"><span class="info-label">{{ label }}</span><span class="info-value">{{ value }}</span></div>
     {% endfor %}
   </div>
-  <p><a class="btn" href="/{% if access_key %}?key={{ access_key }}{% endif %}">← Back to home</a></p>
+  <p class="btn-row">
+    <a class="btn" href="/{% if access_key %}?key={{ access_key }}{% endif %}">← Back to home</a>
+    <a class="btn" href="/log{% if access_key %}?key={{ access_key }}{% endif %}">Logs</a>
+  </p>
 </div>
 {% endblock %}

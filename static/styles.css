@@ -382,6 +382,26 @@ main { display: block; }
 }
 .btn:hover { filter: brightness(1.08); }
 
+/* ── Log viewer ────────────────────────────────────────────────────────────── */
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.log-page { max-width: 1100px; }
+.log-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.log-live { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; }
+.log-status { color: var(--muted); font-size: 0.85rem; flex: 1; }
+.log-dump {
+  max-height: calc(100vh - 20rem);
+  min-height: 12rem;
+  overflow: auto;
+  font-size: 0.78rem;
+}
+
 /* ── Footer ────────────────────────────────────────────────────────────────── */
 
 #page-footer {

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Log · {{ app_label }}{% endblock %}
+
+{% block content %}
+<div class="info-page log-page">
+  <h2>Log file</h2>
+  {% if log_path %}
+  <p class="config-path">{{ log_path }}</p>
+  <div class="log-toolbar">
+    <label class="log-live"><input type="checkbox" id="log-live"> Live updates</label>
+    <span id="log-status" class="log-status"></span>
+    <a class="btn" href="/log/download{% if access_key %}?key={{ access_key }}{% endif %}" download>Download</a>
+  </div>
+  <pre id="log-content" class="config-dump log-dump"
+       data-generation="{{ log_chunk.generation }}"
+       data-offset="{{ log_chunk.offset }}">{{ log_chunk.text }}</pre>
+  {% else %}
+  <p class="empty-state">File logging is not enabled. Set <code>Files.LogfileName</code> in the config file.</p>
+  {% endif %}
+  <p class="btn-row">
+    <a class="btn" href="/system{% if access_key %}?key={{ access_key }}{% endif %}">← Back to system</a>
+  </p>
+</div>
+{% if log_path %}<script src="/static/log.js"></script>{% endif %}
+{% endblock %}
