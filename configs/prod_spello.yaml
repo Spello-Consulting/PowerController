@@ -138,13 +138,13 @@ Outputs:
     HideFromTempProbesSummary: True
 
 
-OutputMetering:
-  Enable: True    # Set to True to enable logging of output energy consumption data
-  DataFile: logs/output_usage.csv     # Record to CSV data file. Required
-  DataFileMaxDays: -1  # Maximum number of days to keep in the CSV data file. Set to -1 for unlimited.
-  OutputsToLog:   # A list of outputs to log. These must have a meter associated with them (Outputs: [Item]: DeviceMeter field)
-    - Output: Pool Pump
-    - Output: Chlorinator
+# OutputMetering:
+#   Enable: True    # Set to True to enable logging of output energy consumption data
+#   DataFile: logs/output_usage.csv     # Record to CSV data file. Required
+#   DataFileMaxDays: -1  # Maximum number of days to keep in the CSV data file. Set to -1 for unlimited.
+#   OutputsToLog:   # A list of outputs to log. These must have a meter associated with them (Outputs: [Item]: DeviceMeter field)
+#     - Output: Pool Pump
+#     - Output: Chlorinator
 
 
 Location:
