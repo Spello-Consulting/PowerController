@@ -1,0 +1,168 @@
+General:
+  # A label for this installation - used in the email subject and web viewer app
+  Label: PC Development
+  PollingInterval: 10
+  # Print some basic information to the console during startup and operation
+  PrintToConsole: True
+  # A default price to use if the Amber API is not available and there is no schedule price defined
+  DefaultPrice: 32.0
+  CurrencySymbol: $
+  SubunitSymbol: ¢
+
+ 
+Website:
+  HostingIP: 0.0.0.0
+  Port: 8080
+  # How often to refresh the web page (in seconds). Set to 0 to disable auto-refresh.
+  PageAutoRefresh: 10
+  DebugMode: False
+
+
+HeartbeatMonitor:
+  Enable: False
+  WebsiteURL: https://uptime.betterstack.com/api/v1/heartbeat/zcsNtnEQHRDNWJENvcZc94fx
+  HeartbeatTimeout: 5
+  Frequency: 20
+
+
+
+AmberAPI:
+  Mode: Live
+  APIURL: https://api.amber.com.au/v1
+  RefreshInterval: 5
+  UsageDataFile: logs/amber_usage_data.csv
+  PricesCacheFile: logs/latest_prices.json
+
+
+# Use this section to configure your Shelly devices used to control the lights
+# See this page for more information: https://nickelseyspelloc.github.io/sc_utility/guide/shelly_control/
+SCSmartDevices:
+  AllowDebugLogging: False
+  SimulationFileFolder: simulation_files/
+  Devices:
+    - Name: Power EM1
+      Model: ShellyEMG3
+      Hostname: 192.168.87.40
+      ExpectOffline: True
+      Meters:
+        - Name: "Power EM1.1"
+        - Name: "Power EM1.2"
+    - Name: Sydney Dev A
+      Model: Shelly2PMG3
+      Hostname: 192.168.86.99
+      Simulate: False
+      ExpectOffline: True
+      Outputs:
+        - Name: "Sydney Dev A O1"
+        - Name: "Sydney Dev A O2"
+
+# Configure the outputs for your devices and how they behave
+Outputs:
+  - Name: Sydney Dev A
+    DeviceOutput: Sydney Dev A O1
+    Mode: Schedule
+    Schedule: General
+    AmberChannel: general
+    Disable: False
+    HideFromTempProbesSummary: False
+    TargetHours: 1.6
+    MinHours: 0
+    MaxHours: 6
+    MaxShortfallHours: 0
+    MaxBestPrice: 25.0
+    MaxPriorityPrice: 30.0
+  - Name: "EM4.1 Living & Beds"  # Power Breaker 4
+    Type: meter
+    DeviceMeter: Power EM4.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    # HideFromWebApp: True
+    # HideFromViewerApp: True
+  - Name: "EM4.2 Kitchen & Laundry"  # Power Breaker 5
+    Type: meter
+    DeviceMeter: Power EM4.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    # HideFromWebApp: True
+    # HideFromViewerApp: True
+  - Name: "EM4.3 Cooking"  # Power Breaker 6
+    Type: meter
+    DeviceMeter: Power EM4.3
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 25
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    # HideFromWebApp: True
+    # HideFromViewerApp: True
+
+Location:
+  Timezone: Australia/Sydney
+  GoogleMapsURL: https://www.google.com/maps/place/Sydney+NSW/@-33.8478053,150.602357,10z
+
+
+Files:
+  SavedStateFile: system_state.json
+  LogfileName: logs/logfile.log
+  LogfileVerbosity: debug
+  ConsoleVerbosity: debug
+
+
+ViewerWebsite:
+  Enable: True
+  BaseURL: http://127.0.0.1:8000
+  APITimeout: 20
+  Frequency: 10
+
+
+# Enter your settings here if you want to be emailed when there's a critical error 
+Email:
+  EnableEmail: True
+  SubjectPrefix: "[Dev PowerController]: "
+
+
+OperatingSchedules:
+  - Name: General
+    UsePowerTariff: False
+    Windows:
+      - StartTime: "10:30"
+        EndTime: "15:00"
+        DaysOfWeek: All
+        Price: 20.12
+  - Name: Pool Solar
+    Windows:
+      - StartTime: "08:00"
+        EndTime: "11:30"
+        DaysOfWeek: All
+        # Price: 15
+
+
+DataAPI:
+  Enable: True
+  HostingIP: 0.0.0.0
+  Port: 8081
+  RefreshInterval: 0
+  Outputs:
+    - Name: Sydney Dev A O1
+      DisplayName: Dev 01
+  Meters:
+    - Name: "Power EM4.1"
+      DisplayName: "Living & Beds"
+    - Name: "Power EM4.2"
+      DisplayName: "Kitchen & Laundry"
+    - Name: "Power EM4.3"
+      DisplayName: "Cooking"
+  EnergyPrices:
+    AmberChannel: general
+    IntervalTime: 30
+    NumIntervals: 24
+    WarningPrice: 40.0
+    CriticalPrice: 60.0
+
+
