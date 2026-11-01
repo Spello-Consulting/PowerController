@@ -40,16 +40,17 @@ SCSmartDevices:
   AllowDebugLogging: False
   SimulationFileFolder: simulation_files/
   Devices:
-    - Name: Power EM1
-      Model: ShellyEMG3
-      Hostname: 192.168.87.40
+    - Name: Power EM4
+      Model: Shelly3EM-63T
+      Hostname: 192.168.86.77
       ExpectOffline: True
       Meters:
-        - Name: "Power EM1.1"
-        - Name: "Power EM1.2"
+        - Name: "Power EM4.1"
+        - Name: "Power EM4.2"
+        - Name: "Power EM4.3"
     - Name: Sydney Dev A
       Model: Shelly2PMG3
-      Hostname: 192.168.86.99
+      Hostname: 192.168.86.30
       Simulate: False
       ExpectOffline: True
       Outputs:
@@ -58,7 +59,7 @@ SCSmartDevices:
 
 # Configure the outputs for your devices and how they behave
 Outputs:
-  - Name: Sydney Dev A
+  - Name: Sydney Dev A 01
     DeviceOutput: Sydney Dev A O1
     Mode: Schedule
     Schedule: General
@@ -149,7 +150,7 @@ DataAPI:
   Port: 8081
   RefreshInterval: 0
   Outputs:
-    - Name: Sydney Dev A O1
+    - Name: Sydney Dev A 01
       DisplayName: Dev 01
   Meters:
     - Name: "Power EM4.1"
@@ -166,3 +167,16 @@ DataAPI:
     CriticalPrice: 60.0
 
 
+OutputMetering:
+  Enable: True    # Set to True to enable logging of output energy consumption data
+  DataFile: logs/output_usage.csv     # Record to CSV data file. Required
+  DataFileMaxDays: -1  # Maximum number of days to keep in the CSV data file. Set to -1 for unlimited.
+  OutputsToLog:   # A list of outputs to log. These must have a meter associated with them (Outputs: [Item]: DeviceMeter field)
+    - Output: "Sydney Dev A 01"
+      DisplayName: "Dev A 01"
+    - Output: "EM4.1 Living & Beds"
+      DisplayName: "Living & Beds"
+    - Output: "EM4.2 Kitchen & Laundry"
+      DisplayName: "Kitchen & Laundry"
+    - Output: "EM4.3 Cooking"
+      DisplayName: "Cooking"

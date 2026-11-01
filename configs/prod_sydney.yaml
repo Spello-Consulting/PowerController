@@ -106,7 +106,7 @@ SCSmartDevices:
         - Name: "Power EM2.1"
         - Name: "Power EM2.2"
     - Name: Power EM4
-      Model: ShellyEMG3
+      Model: Shelly3EM-63T
       Hostname: 192.168.87.43
       ExpectOffline: True
       Meters:
@@ -114,7 +114,7 @@ SCSmartDevices:
         - Name: "Power EM4.2"
         - Name: "Power EM4.3"
     - Name: Power EM5
-      Model: ShellyEMG3
+      Model: Shelly3EM-63T
       Hostname: 192.168.87.44
       ExpectOffline: True
       Meters:
