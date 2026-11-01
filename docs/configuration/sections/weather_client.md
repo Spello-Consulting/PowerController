@@ -1,6 +1,6 @@
 # Configuration file - WeatherCLient section
 
-This configures the [weather client library](https://nickelseyspelloc.github.io/sc-weather/) so that the app can download currently forecast data from OpenWeatherMap or Open Meteo. OpenWeatherMap requires an API key - if one isn't provdied, the weather client will fall back to the free Open Meteo.
+This configures the [weather client library](https://spello-consulting.github.io/sc-weather/) so that the app can download currently forecast data from OpenWeatherMap or Open Meteo. OpenWeatherMap requires an API key - if one isn't provdied, the weather client will fall back to the free Open Meteo.
 
 The weather client will use the lat/long as configured in the [Location section](location.md) to determine the location to get the weather forecast for.
 

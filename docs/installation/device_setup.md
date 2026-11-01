@@ -14,7 +14,7 @@ Shelly make a wide range of home automation products. PowerController supports t
 4. In the app, go to Settings > Device Information and make a note of the following:
     - Device IP address (e.g. 192.168.86.21)
     - Device Type (e.g. Shelly Plus 2 PM)
-5. Lookup the device type in [models library](https://nickelseyspelloc.github.io/sc-smart-device/shelly_models_list/) and make a note of the model identifier (e.g. ShellyPlus2PM). Here's the entry for our example:
+5. Lookup the device type in [models library](https://spello-consulting.github.io/sc-smart-device/shelly_models_list/) and make a note of the model identifier (e.g. ShellyPlus2PM). Here's the entry for our example:
 ```json
     {
       "model": "ShellyPlus2PM",
@@ -32,11 +32,11 @@ Shelly make a wide range of home automation products. PowerController supports t
 
 ### Digital Temperature Probes
 
-See the [Shelly Temperature Probes page](https://nickelseyspelloc.github.io/sc-smart-device/shelly_temp_probes/)
+See the [Shelly Temperature Probes page](https://spello-consulting.github.io/sc-smart-device/shelly_temp_probes/)
 
 ### Unsupported Shelly device
 
-If you've bought a Shelly smart switch or energy meter and are having problems getting it to work, you can try modifying the [shelly_models.json](https://nickelseyspelloc.github.io/sc-smart-device/shelly_models_list/) file included with the sc_utility library to add or update your devie. Alternatively, please contact [Nick Elsey](https://www.spelloconsulting.com/contact-nick-elsey) for support.
+If you've bought a Shelly smart switch or energy meter and are having problems getting it to work, you can try modifying the [shelly_models.json](https://spello-consulting.github.io/sc-smart-device/shelly_models_list/) file included with the sc_utility library to add or update your devie. Alternatively, please contact [Nick Elsey](https://www.spelloconsulting.com/contact-nick-elsey) for support.
 
 
 ## Setting up a Tasmota device
