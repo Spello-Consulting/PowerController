@@ -28,3 +28,4 @@ snapshots/
 logs/
 simulation_files/
 .env.target
+site
