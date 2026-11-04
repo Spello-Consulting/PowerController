@@ -29,7 +29,11 @@ from sc_foundation import DateHelper
 
 from sc_smart_device import SmartDeviceStatus, SmartDeviceView
 
-from local_enumerations import DELAY_AFTER_STATE_CHANGE, OutputActionType
+from local_enumerations import (
+    DELAY_AFTER_STATE_CHANGE,
+    OutputAction,
+    OutputActionType,
+)
 from outputs import OutputManager
 from pricing import PricingManager
 
@@ -462,3 +466,31 @@ class TestGetSaveObject:
         view = _online_view(smart_device_workers)
         obj = output_manager.get_save_object(view)
         assert obj["Name"] == "Network Rack"
+
+
+# ---------------------------------------------------------------------------
+# get_webapp_data — busy flag (issue #115)
+# ---------------------------------------------------------------------------
+
+class TestGetWebappDataBusy:
+    def test_not_busy_when_no_action_in_flight(self, output_manager, smart_device_workers):
+        output_manager.clear_action_request()
+        view = _online_view(smart_device_workers)
+        data = output_manager.get_webapp_data(view)
+        assert data["busy"] is False
+
+    def test_busy_while_action_in_flight(self, output_manager, smart_device_workers):
+        action = OutputAction(
+            worker_request_id=None,
+            request=None,
+            type=OutputActionType.TURN_ON,
+            system_state=SystemState.APP_OVERRIDE,
+            reason=StateReasonOn.APP_MODE_ON,
+        )
+        output_manager.record_action_request(action)
+        try:
+            view = _online_view(smart_device_workers)
+            data = output_manager.get_webapp_data(view)
+            assert data["busy"] is True
+        finally:
+            output_manager.clear_action_request()

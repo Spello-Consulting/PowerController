@@ -417,7 +417,19 @@ def _register_routes(
                 except json.JSONDecodeError:
                     continue
 
-                if msg.get("type") != "command":
+                msg_type = msg.get("type")
+
+                if msg_type == "request_snapshot":
+                    # Client-driven periodic refresh. Push the current snapshot to
+                    # this socket only; keeps the page fresh without a full-page
+                    # reload (which would tear down this command channel).
+                    snapshot = await asyncio.to_thread(controller.get_webapp_data)
+                    await ws.send_text(
+                        json.dumps({"type": "state_update", "state": snapshot})
+                    )
+                    continue
+
+                if msg_type != "command":
                     continue
 
                 action = msg.get("action")

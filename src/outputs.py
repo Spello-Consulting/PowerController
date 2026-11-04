@@ -395,12 +395,18 @@ class OutputManager:  # noqa: PLR0904
         else:
             stopping_at = None
         power_draw = view.get_meter_power(self.device_meter_id) if self.device_meter_id else 0
+        # An in-flight action request means a switch/sequence is currently
+        # running for this output, so it cannot accept a new mode change yet.
+        # The web app disables the mode buttons while this is true (issue #115).
+        is_busy = current_action is not None
+
         data = {
             "id": self.id,
             "allow_actions": True,
             "name": self.name,
             "is_on": is_device_output_on,
             "is_online": view.get_device_online(self.device_id),
+            "busy": is_busy,
             "mode": self.app_mode.value,
             "max_app_mode_on_minutes": self.app_mode_max_on_time,
             "max_app_mode_off_minutes": self.app_mode_max_off_time,

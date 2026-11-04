@@ -9,6 +9,7 @@ Covers:
 """
 
 import asyncio
+import copy
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -35,6 +36,7 @@ SAMPLE_WEBAPP_DATA = {
             "name": "Network Rack",
             "is_on": False,
             "is_online": True,
+            "busy": False,
             "mode": "auto",
             "allow_actions": True,
             "max_app_mode_on_minutes": 0,
@@ -151,6 +153,44 @@ class TestIndexPage:
     def test_allowed_without_key_when_none_configured(self, client):
         resp = client.get("/")
         assert resp.status_code != 403
+
+
+# ---------------------------------------------------------------------------
+# HTTP GET / — mode button disabling (issue #115)
+# ---------------------------------------------------------------------------
+
+
+class TestIndexButtonDisabling:
+    """The On/Off/Auto buttons must render disabled when the output cannot
+    accept input: the device is offline, or a switch/sequence is in flight."""
+
+    def _render(self, logger, output_overrides):
+        data = copy.deepcopy(SAMPLE_WEBAPP_DATA)
+        data["outputs"]["network_rack"].update(output_overrides)
+        cfg = _make_config(access_key=None)
+        ctrl = _make_controller(webapp_data=data)
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c:
+            return c.get("/").text
+
+    def test_buttons_enabled_when_online_and_idle(self, logger):
+        body = self._render(logger, {"is_online": True, "busy": False})
+        assert ">On</button>" in body
+        assert "disabled>On</button>" not in body
+        assert "disabled>Off</button>" not in body
+        assert "disabled>Auto</button>" not in body
+
+    def test_buttons_disabled_when_busy(self, logger):
+        body = self._render(logger, {"is_online": True, "busy": True})
+        assert "disabled>On</button>" in body
+        assert "disabled>Off</button>" in body
+        assert "disabled>Auto</button>" in body
+
+    def test_buttons_disabled_when_offline(self, logger):
+        body = self._render(logger, {"is_online": False, "busy": False})
+        assert "disabled>On</button>" in body
+        assert "disabled>Off</button>" in body
+        assert "disabled>Auto</button>" in body
 
 
 # ---------------------------------------------------------------------------
@@ -356,6 +396,39 @@ class TestWebSocketCommands:
                     "mode": "auto",
                 }
             )
+        ctrl.post_command.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# WebSocket /ws — request_snapshot (issue #115)
+# ---------------------------------------------------------------------------
+
+
+class TestWebSocketRequestSnapshot:
+    def test_request_snapshot_returns_state_update(self, logger):
+        """A request_snapshot message pushes a fresh snapshot to the caller.
+
+        This replaces the old full-page auto-refresh, which tore down the
+        command socket and dropped in-flight button presses.
+        """
+        ctrl = _make_controller()
+        cfg = _make_config(access_key=None)
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c, c.websocket_connect("/ws") as ws:
+            ws.receive_json()  # consume initial snapshot
+            ws.send_json({"type": "request_snapshot"})
+            msg = ws.receive_json()
+        assert msg["type"] == "state_update"
+        assert "outputs" in msg["state"]
+
+    def test_request_snapshot_does_not_post_command(self, logger):
+        ctrl = _make_controller()
+        cfg = _make_config(access_key=None)
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c, c.websocket_connect("/ws") as ws:
+            ws.receive_json()
+            ws.send_json({"type": "request_snapshot"})
+            ws.receive_json()
         ctrl.post_command.assert_not_called()
 
 
