@@ -50,7 +50,7 @@ SCSmartDevices:
   Devices:
     - Name: Pool Pump
       Model: ShellyPlus1PM
-      Hostname: 192.168.86.20
+      Hostname: 192.168.87.20
       DeviceAlertTemp: 85.0
       Inputs:
         - Name: "Pool Pump Input"
@@ -60,7 +60,7 @@ SCSmartDevices:
         - Name: "Pool Pump Meter"
     - Name: Pool Solar
       Model: Shelly2PMG3
-      Hostname: 192.168.86.35
+      Hostname: 192.168.87.21
       DeviceAlertTemp: 85.0
       Outputs:
         - Name: "Solar Pump"
@@ -78,43 +78,52 @@ SCSmartDevices:
         - Name: "Temp Air"
     - Name: Pool Solar Fan
       Model: ShellyPlus1PM
-      Hostname: 192.168.86.28
+      Hostname: 192.168.87.22
       DeviceAlertTemp: 80.0
       Outputs:
         - Name: "Solar Fan Output"
     - Name: Hot Water
       Model: ShellyEM
-      Hostname: 192.168.86.27
+      Hostname: 192.168.87.23
       ExpectOffline: True
       Outputs:
         - Name: "Hot Water O1"
       Meters:
         - Name: "Hot Water M1"
         - Name: "Hot Water M2"
-    - Name: Panel EM1
+    - Name: Power EM1
       Model: ShellyEMG3
-      Hostname: 192.168.86.44
+      Hostname: 192.168.87.40
       ExpectOffline: True
       Meters:
-        - Name: "Panel EM1.1"
-        - Name: "Panel EM1.2"
-    - Name: Panel EM2
+        - Name: "Power EM1.1"
+        - Name: "Power EM1.2"
+    - Name: Power EM2
       Model: ShellyEMG3
-      Hostname: 192.168.86.46
+      Hostname: 192.168.87.41
       ExpectOffline: True
       Meters:
-        - Name: "Panel EM2.1"
-        - Name: "Panel EM2.2"
-    - Name: Panel EM3
-      Model: ShellyEM
-      Hostname: 192.168.86.22
+        - Name: "Power EM2.1"
+        - Name: "Power EM2.2"
+    - Name: Power EM4
+      Model: Shelly3EM-63T
+      Hostname: 192.168.87.43
       ExpectOffline: True
       Meters:
-        - Name: "Panel EM3.1"
-        - Name: "Panel EM3.2"
+        - Name: "Power EM4.1"
+        - Name: "Power EM4.2"
+        - Name: "Power EM4.3"
+    - Name: Power EM5
+      Model: Shelly3EM-63T
+      Hostname: 192.168.87.44
+      ExpectOffline: True
+      Meters:
+        - Name: "Power EM5.1"
+        - Name: "Power EM5.2"
+        - Name: "Power EM5.3"
     - Name: Network Rack
       Model: Shelly1PMG3
-      Hostname: 192.168.86.26
+      Hostname: 192.168.87.24
       Simulate: False
       ExpectOffline: True
       Outputs:
@@ -123,7 +132,17 @@ SCSmartDevices:
 
 # Configure the outputs for your devices and how they behave
 Outputs:
-  - Name: Pool Pump
+  - Name: "EM1.1 Lights"  # Power Breaker 1
+    Type: meter
+    DeviceMeter: Power EM1.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: Pool Pump   # Power Breaker 3
     DeviceOutput: Pool Pump Output
     Mode: BestPrice
     Schedule: General
@@ -153,7 +172,7 @@ Outputs:
     StopOnExit: False
     MaxAppOnTime: 60
     MaxAppOffTime: 60
-  - Name: Solar Pump
+  - Name: Solar Pump   # Power Breaker 3
     DeviceOutput: Solar Pump
     Mode: Schedule
     Schedule: Pool Solar
@@ -187,7 +206,7 @@ Outputs:
       - TempProbe: Temp Pool Water
         Condition: LessThan
         Temperature: 31.0
-  - Name: Solar Fan
+  - Name: Solar Fan   # Power Breaker 3
     DeviceOutput: Solar Fan Output
     Mode: Schedule
     Schedule: Pool Solar Fan
@@ -206,7 +225,57 @@ Outputs:
         Temperature: 75.0
     HideFromWebApp: True
     HideFromViewerApp: True
-  - Name: Hot Water
+  - Name: "EM4.1 Living & Beds"  # Power Breaker 4
+    Type: meter
+    DeviceMeter: Power EM4.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM4.2 Kitchen & Laundry"  # Power Breaker 5
+    Type: meter
+    DeviceMeter: Power EM4.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 40
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM4.3 Cooking"  # Power Breaker 6
+    Type: meter
+    DeviceMeter: Power EM4.3
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 25
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM1.2 Workshop"  # Power Breaker 7
+    Type: meter
+    DeviceMeter: Power EM1.2
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 25
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 20
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: "EM2.1 Bedroom A/C"  # Power Breaker 8
+    Type: meter
+    DeviceMeter: Power EM2.1
+    Mode: BestPrice
+    Schedule: General
+    PowerOnThresholdWatts: 20
+    PowerOffThresholdWatts: 10
+    MinEnergyToLog: 100
+    HideFromWebApp: True
+    HideFromViewerApp: True
+  - Name: Hot Water   # Power Breaker 9
     DeviceOutput: Hot Water O1
     Mode: BestPrice
     Schedule: Controlled Load
@@ -221,47 +290,9 @@ Outputs:
     DeviceMeter: Hot Water M1
     HideFromWebApp: False
     HideFromViewerApp: False
-  - Name: Tesla
-    Type: teslamate
-    CarID: 1
-    DaysOfHistory: 14
-    AmberChannel: general
-    Schedule: General
-    HideFromWebApp: True
-    HideFromViewerApp: False
-  - Name: "EM1.1 Living & Beds"
+  - Name: "EM5.1 Living A/C"  # Power Breaker 10
     Type: meter
-    DeviceMeter: Panel EM1.1
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 40
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM1.2 Kitchen & Laundry"
-    Type: meter
-    DeviceMeter: Panel EM1.2
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 40
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM2.1 Cooking"
-    Type: meter
-    DeviceMeter: Panel EM2.1
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 25
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM2.2 Bedroom A/C"
-    Type: meter
-    DeviceMeter: Panel EM2.2
+    DeviceMeter: Power EM5.1
     Mode: BestPrice
     Schedule: General
     PowerOnThresholdWatts: 20
@@ -269,19 +300,19 @@ Outputs:
     MinEnergyToLog: 100
     HideFromWebApp: True
     HideFromViewerApp: True
-  - Name: "EM3.1 Living A/C"
+  - Name: "EM5.2 Living Room"  # Power Breaker 11
     Type: meter
-    DeviceMeter: Panel EM3.1
+    DeviceMeter: Power EM5.2
     Mode: BestPrice
     Schedule: General
     PowerOnThresholdWatts: 20
     PowerOffThresholdWatts: 10
     MinEnergyToLog: 100
     HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM3.2 Study A/C"
+    HideFromViewerApp: True    
+  - Name: "EM5.3 Study A/C"   # Power Breaker 12
     Type: meter
-    DeviceMeter: Panel EM3.2
+    DeviceMeter: Power EM5.3
     Mode: BestPrice
     Schedule: General
     PowerOnThresholdWatts: 20
@@ -305,6 +336,14 @@ Outputs:
     UPSIntegration:
       UPS: Eaton 5E UPS
       ActionIfUnhealthy: TurnOn
+  - Name: Tesla
+    Type: teslamate
+    CarID: 1
+    DaysOfHistory: 14
+    AmberChannel: general
+    Schedule: General
+    HideFromWebApp: True
+    HideFromViewerApp: False
 
 
 
@@ -330,19 +369,25 @@ OutputMetering:
     - Output: Solar Pump
     - Output: Hot Water
     - Output: Tesla
-    - Output: "EM1.1 Living & Beds"
-      DisplayName: "Living & Beds"
-    - Output: "EM1.2 Kitchen & Laundry"
-      DisplayName: "Kitchen & Laundry"
-    - Output: "EM2.1 Cooking"
-      DisplayName: "Cooking"
-    - Output: "EM2.2 Bedroom A/C"
-      DisplayName: "Bedroom A/C"
-    - Output: "EM3.1 Living A/C"
-      DisplayName: "Living A/C"
-    - Output: "EM3.2 Study A/C"
-      DisplayName: "Study A/C"
     - Output: Network Rack
+    - Output: "EM1.1 Lights"
+      DisplayName: "Lights"
+    - Output: "EM1.2 Workshop"
+      DisplayName: "Workshop"
+    - Output: "EM2.1 Bedroom A/C"
+      DisplayName: "Bedroom A/C"
+    - Output: "EM4.1 Living & Beds"
+      DisplayName: "Living & Beds"
+    - Output: "EM4.2 Kitchen & Laundry"
+      DisplayName: "Kitchen & Laundry"
+    - Output: "EM4.3 Cooking"
+      DisplayName: "Cooking"
+    - Output: "EM5.1 Living A/C"
+      DisplayName: "Living A/C"
+    - Output: "EM5.2 Living Room"
+      DisplayName: "Living Room"
+    - Output: "EM5.3 Study A/C"
+      DisplayName: "Study A/C"
 
 
 DataAPI:
@@ -359,17 +404,23 @@ DataAPI:
     - Name: Network Rack
       DisplayName: Network
   Meters:
-    - Name: "Panel EM1.1"
-      DisplayName: "Living & Beds"
-    - Name: "Panel EM1.2"
-      DisplayName: "Kitchen & Laundry"
-    - Name: "Panel EM2.1"
-      DisplayName: "Cooking"
-    - Name: "Panel EM2.2"
+    - Name: "Power EM1.1"
+      DisplayName: "Lights"
+    - Name: "Power EM1.2"
+      DisplayName: "Workshop"
+    - Name: "Power EM2.1"
       DisplayName: "Bedroom A/C"
-    - Name: "Panel EM3.1"
+    - Name: "Power EM4.1"
+      DisplayName: "Living & Beds"
+    - Name: "Power EM4.2"
+      DisplayName: "Kitchen & Laundry"
+    - Name: "Power EM4.3"
+      DisplayName: "Cooking"
+    - Name: "Power EM5.1"
       DisplayName: "Living A/C"
-    - Name: "Panel EM3.2"
+    - Name: "Power EM5.2"
+      DisplayName: "Living Room"
+    - Name: "Power EM5.3"
       DisplayName: "Study A/C"
   TempProbes:
     - Name: "Temp Pool Water"
@@ -580,7 +631,7 @@ OperatingSchedules:
       - StartTime: "10:30"
         EndTime: "17:00"
         DaysOfWeek: All
-      - StartTime: "22:30"
+      - StartTime: "22:00"
         EndTime: "23:59"
         DaysOfWeek: All
   - Name: Pool Solar
