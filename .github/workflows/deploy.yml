@@ -81,9 +81,10 @@ jobs:
       - name: Deploy and start the service
         run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy spelloapp
 
-      - name: Stop the service
+      - name: Stop and disable the service
         run: |
           sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh disable
                   
       # - name: Verify service is running
       #   run: |
