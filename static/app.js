@@ -96,15 +96,19 @@
         });
       });
 
-      // Button active states + disable when the device is offline
+      // Button active states + disable when the device is offline or the
+      // output is busy running a switch/sequence (issue #115): a button that
+      // cannot accept input right now should not look clickable.
       var buttons = card.querySelectorAll(".mode-button");
+      var offline = output.is_online === false;
+      var busy = output.busy === true;
       buttons.forEach(function (btn) {
         if (output.mode) {
           var btnMode = btn.getAttribute("data-mode");
           btn.classList.toggle("active", btnMode === output.mode);
         }
-        if (typeof output.is_online === "boolean") {
-          btn.disabled = !output.is_online;
+        if (output.is_online !== undefined || output.busy !== undefined) {
+          btn.disabled = offline || busy;
         }
       });
     });
@@ -121,13 +125,41 @@
     return n;
   }
 
+  // Commands awaiting a live socket, keyed by output id so the latest intent
+  // for an output wins (issue #115). Flushed on (re)connect.
+  var pendingCommands = new Map();
+
+  // Send a command if the socket is open; otherwise queue it and let the
+  // connection logic flush it once the socket (re)opens. Returns true when the
+  // frame was handed to an open socket. A command is never silently dropped.
+  function sendCommand(command) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      try {
+        ws.send(JSON.stringify(command));
+        return true;
+      } catch (e) {
+        // Socket looked open but the send failed (e.g. it died underneath us).
+        // Queue the command and force a reconnect so it gets flushed.
+        pendingCommands.set(command.output_id, command);
+        if (ws) { try { ws.close(); } catch (e2) { /* ignore */ } }
+        return false;
+      }
+    }
+    pendingCommands.set(command.output_id, command);
+    setConn("offline");
+    return false;
+  }
+
+  function flushPendingCommands() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (pendingCommands.size === 0) return;
+    var commands = Array.from(pendingCommands.values());
+    pendingCommands.clear();
+    commands.forEach(function (command) { sendCommand(command); });
+  }
+
   // Exposed for the inline onclick handlers in home.html.
   window.setMode = function (outputId, mode) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      console.warn("WebSocket not connected; cannot send command");
-      return;
-    }
-
     var revertTimeMins = null;
     if (mode === "on" || mode === "off") {
       var output = latestOutputsById.get(outputId);
@@ -169,13 +201,13 @@
       }
     }
 
-    ws.send(JSON.stringify({
+    sendCommand({
       type: "command",
       action: "set_mode",
       output_id: outputId,
       mode: mode,
       revert_time_mins: revertTimeMins
-    }));
+    });
   };
 
   function connect() {
@@ -184,7 +216,11 @@
     if (accessKey) url += "?key=" + encodeURIComponent(accessKey);
     ws = new WebSocket(url);
 
-    ws.onopen = function () { setConn("live"); };
+    ws.onopen = function () {
+      setConn("live");
+      // Deliver any commands that were queued while disconnected (issue #115).
+      flushPendingCommands();
+    };
     ws.onmessage = function (event) {
       var msg;
       try { msg = JSON.parse(event.data); } catch (e) { return; }
@@ -204,8 +240,17 @@
     ws.onerror = function () { if (ws) ws.close(); };
   }
 
+  // Periodic refresh (issue #115): request a fresh snapshot over the existing
+  // WebSocket instead of reloading the whole page. A full-page reload tore down
+  // the command socket every few seconds, so button presses that coincided with
+  // a reload were silently dropped. Live updates already arrive over the socket;
+  // this just guarantees the page cannot drift stale between server pushes.
   if (pageAutoRefresh > 0) {
-    setInterval(function () { window.location.reload(); }, pageAutoRefresh * 1000);
+    setInterval(function () {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try { ws.send(JSON.stringify({ type: "request_snapshot" })); } catch (e) { /* ignore */ }
+      }
+    }, pageAutoRefresh * 1000);
   }
   connect();
 })();

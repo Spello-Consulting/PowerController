@@ -38,7 +38,6 @@ AmberAPI:
 # See this page for more information: https://nickelseyspelloc.github.io/sc_utility/guide/shelly_control/
 SCSmartDevices:
   AllowDebugLogging: False
-  SimulationFileFolder: simulation_files/
   Devices:
     - Name: Sydney Dev A
       Model: Shelly2PMG3

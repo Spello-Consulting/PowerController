@@ -49,19 +49,20 @@
           </div>
         </div>
         {% if output.allow_actions %}
+        {% set actions_disabled = (not output.is_online) or output.busy %}
         <div class="button-group">
           <button class="mode-button {{ 'active' if output.mode == 'on' else '' }}"
                   data-mode="on"
                   onclick="setMode('{{ output.id }}', 'on')"
-                  {{ 'disabled' if not output.is_online else '' }}>On</button>
+                  {{ 'disabled' if actions_disabled else '' }}>On</button>
           <button class="mode-button {{ 'active' if output.mode == 'off' else '' }}"
                   data-mode="off"
                   onclick="setMode('{{ output.id }}', 'off')"
-                  {{ 'disabled' if not output.is_online else '' }}>Off</button>
+                  {{ 'disabled' if actions_disabled else '' }}>Off</button>
           <button class="mode-button {{ 'active' if output.mode == 'auto' else '' }}"
                   data-mode="auto"
                   onclick="setMode('{{ output.id }}', 'auto')"
-                  {{ 'disabled' if not output.is_online else '' }}>Auto</button>
+                  {{ 'disabled' if actions_disabled else '' }}>Auto</button>
         </div>
         {% endif %}
       </div>
