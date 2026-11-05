@@ -1181,7 +1181,7 @@
 </tr>
 <tr>
 <td style="text-align: left;">PageAutoRefresh</td>
-<td style="text-align: left;">How often to refresh the web page (in seconds). Set to 0 to disable auto-refresh.</td>
+<td style="text-align: left;">How often, in seconds, to refresh the live data on the web page. The page requests a fresh snapshot over its existing WebSocket connection (it does <strong>not</strong> reload the whole page), so control buttons keep working between refreshes. Set to 0 to disable the periodic refresh (live updates still arrive over the WebSocket whenever state changes).</td>
 </tr>
 <tr>
 <td style="text-align: left;">DebugMode</td>
