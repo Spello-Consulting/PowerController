@@ -9,13 +9,14 @@ on:
         type: choice
         options:
           - sydneyapp
+          - spelloapp
           - pi-spello
-          - both
+          - all
 
 jobs:
   deploy-sydneyapp:
     name: Deploy → sydneyapp
-    if: ${{ inputs.environment == 'sydneyapp' || inputs.environment == 'both' }}
+    if: ${{ inputs.environment == 'sydneyapp' || inputs.environment == 'all' }}
     runs-on: [self-hosted, sydneyapp]
     environment: sydneyapp        # triggers approval gate if configured in GitHub
     steps:
@@ -39,7 +40,7 @@ jobs:
 
   deploy-pi-spello:
     name: Deploy → pi-spello
-    if: ${{ inputs.environment == 'pi-spello' || inputs.environment == 'both' }}
+    if: ${{ inputs.environment == 'pi-spello' || inputs.environment == 'all' }}
     runs-on: [self-hosted, pi-spello]
     environment: pi-spello
     steps:
@@ -60,3 +61,32 @@ jobs:
         run: |
           sleep 6
           sudo --chdir=/home/pi/scripts/PowerController /home/pi/scripts/pyutil/servicectrl.sh is-active
+
+  deploy-spelloapp:
+    name: Deploy → spelloapp
+    if: ${{ inputs.environment == 'spelloapp' || inputs.environment == 'all' }}
+    runs-on: [self-hosted, spelloapp]
+    environment: spelloapp        # triggers approval gate if configured in GitHub
+    steps:
+      - name: Stop the service
+        run: |
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
+
+      - name: Pull latest from GitHub
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/gitrefresh.sh --yes --branch "$BRANCH"
+
+      - name: Deploy and start the service
+        run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy spelloapp
+
+      - name: Stop and disable the service
+        run: |
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
+          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh disable
+                  
+      # - name: Verify service is running
+      #   run: |
+      #     sleep 6
+      #     sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh is-active          
