@@ -105,22 +105,22 @@ SCSmartDevices:
       Meters:
         - Name: "Power EM2.1"
         - Name: "Power EM2.2"
-    - Name: Power EM4
-      Model: Shelly3EM-63T
-      Hostname: 192.168.87.43
-      ExpectOffline: True
-      Meters:
-        - Name: "Power EM4.1"
-        - Name: "Power EM4.2"
-        - Name: "Power EM4.3"
-    - Name: Power EM5
-      Model: Shelly3EM-63T
-      Hostname: 192.168.87.44
-      ExpectOffline: True
-      Meters:
-        - Name: "Power EM5.1"
-        - Name: "Power EM5.2"
-        - Name: "Power EM5.3"
+    # - Name: Power EM4
+    #   Model: Shelly3EM-63T
+    #   Hostname: 192.168.87.43
+    #   ExpectOffline: True
+    #   Meters:
+    #     - Name: "Power EM4.1"
+    #     - Name: "Power EM4.2"
+    #     - Name: "Power EM4.3"
+    # - Name: Power EM5
+    #   Model: Shelly3EM-63T
+    #   Hostname: 192.168.87.44
+    #   ExpectOffline: True
+    #   Meters:
+    #     - Name: "Power EM5.1"
+    #     - Name: "Power EM5.2"
+    #     - Name: "Power EM5.3"
     - Name: Network Rack
       Model: Shelly1PMG3
       Hostname: 192.168.87.24
@@ -128,7 +128,8 @@ SCSmartDevices:
       ExpectOffline: True
       Outputs:
         - Name: "Network Rack O1"
-
+      Meters:
+        - Name: "Network Rack M1"
 
 # Configure the outputs for your devices and how they behave
 Outputs:
@@ -225,36 +226,36 @@ Outputs:
         Temperature: 75.0
     HideFromWebApp: True
     HideFromViewerApp: True
-  - Name: "EM4.1 Living & Beds"  # Power Breaker 4
-    Type: meter
-    DeviceMeter: Power EM4.1
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 40
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM4.2 Kitchen & Laundry"  # Power Breaker 5
-    Type: meter
-    DeviceMeter: Power EM4.2
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 40
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM4.3 Cooking"  # Power Breaker 6
-    Type: meter
-    DeviceMeter: Power EM4.3
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 25
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 20
-    HideFromWebApp: True
-    HideFromViewerApp: True
+  # - Name: "EM4.1 Living & Beds"  # Power Breaker 4
+  #   Type: meter
+  #   DeviceMeter: Power EM4.1
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 40
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 20
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True
+  # - Name: "EM4.2 Kitchen & Laundry"  # Power Breaker 5
+  #   Type: meter
+  #   DeviceMeter: Power EM4.2
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 40
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 20
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True
+  # - Name: "EM4.3 Cooking"  # Power Breaker 6
+  #   Type: meter
+  #   DeviceMeter: Power EM4.3
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 25
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 20
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True
   - Name: "EM1.2 Workshop"  # Power Breaker 7
     Type: meter
     DeviceMeter: Power EM1.2
@@ -290,36 +291,36 @@ Outputs:
     DeviceMeter: Hot Water M1
     HideFromWebApp: False
     HideFromViewerApp: False
-  - Name: "EM5.1 Living A/C"  # Power Breaker 10
-    Type: meter
-    DeviceMeter: Power EM5.1
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 20
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 100
-    HideFromWebApp: True
-    HideFromViewerApp: True
-  - Name: "EM5.2 Living Room"  # Power Breaker 11
-    Type: meter
-    DeviceMeter: Power EM5.2
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 20
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 100
-    HideFromWebApp: True
-    HideFromViewerApp: True    
-  - Name: "EM5.3 Study A/C"   # Power Breaker 12
-    Type: meter
-    DeviceMeter: Power EM5.3
-    Mode: BestPrice
-    Schedule: General
-    PowerOnThresholdWatts: 20
-    PowerOffThresholdWatts: 10
-    MinEnergyToLog: 100
-    HideFromWebApp: True
-    HideFromViewerApp: True
+  # - Name: "EM5.1 Living A/C"  # Power Breaker 10
+  #   Type: meter
+  #   DeviceMeter: Power EM5.1
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 20
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 100
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True
+  # - Name: "EM5.2 Living Room"  # Power Breaker 11
+  #   Type: meter
+  #   DeviceMeter: Power EM5.2
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 20
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 100
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True    
+  # - Name: "EM5.3 Study A/C"   # Power Breaker 12
+  #   Type: meter
+  #   DeviceMeter: Power EM5.3
+  #   Mode: BestPrice
+  #   Schedule: General
+  #   PowerOnThresholdWatts: 20
+  #   PowerOffThresholdWatts: 10
+  #   MinEnergyToLog: 100
+  #   HideFromWebApp: True
+  #   HideFromViewerApp: True
   - Name: Network Rack
     DeviceOutput: Network Rack O1
     Mode: BestPrice
@@ -330,6 +331,7 @@ Outputs:
     MaxShortfallHours: 0
     MaxBestPrice: 50.0
     MaxPriorityPrice: 52.0
+    DeviceMeter: Network Rack M1
     HideFromWebApp: False
     HideFromViewerApp: False
     HideFromTempProbesSummary: True
@@ -376,18 +378,18 @@ OutputMetering:
       DisplayName: "Workshop"
     - Output: "EM2.1 Bedroom A/C"
       DisplayName: "Bedroom A/C"
-    - Output: "EM4.1 Living & Beds"
-      DisplayName: "Living & Beds"
-    - Output: "EM4.2 Kitchen & Laundry"
-      DisplayName: "Kitchen & Laundry"
-    - Output: "EM4.3 Cooking"
-      DisplayName: "Cooking"
-    - Output: "EM5.1 Living A/C"
-      DisplayName: "Living A/C"
-    - Output: "EM5.2 Living Room"
-      DisplayName: "Living Room"
-    - Output: "EM5.3 Study A/C"
-      DisplayName: "Study A/C"
+    # - Output: "EM4.1 Living & Beds"
+    #   DisplayName: "Living & Beds"
+    # - Output: "EM4.2 Kitchen & Laundry"
+    #   DisplayName: "Kitchen & Laundry"
+    # - Output: "EM4.3 Cooking"
+    #   DisplayName: "Cooking"
+    # - Output: "EM5.1 Living A/C"
+    #   DisplayName: "Living A/C"
+    # - Output: "EM5.2 Living Room"
+    #   DisplayName: "Living Room"
+    # - Output: "EM5.3 Study A/C"
+    #   DisplayName: "Study A/C"
 
 
 DataAPI:
@@ -410,18 +412,18 @@ DataAPI:
       DisplayName: "Workshop"
     - Name: "Power EM2.1"
       DisplayName: "Bedroom A/C"
-    - Name: "Power EM4.1"
-      DisplayName: "Living & Beds"
-    - Name: "Power EM4.2"
-      DisplayName: "Kitchen & Laundry"
-    - Name: "Power EM4.3"
-      DisplayName: "Cooking"
-    - Name: "Power EM5.1"
-      DisplayName: "Living A/C"
-    - Name: "Power EM5.2"
-      DisplayName: "Living Room"
-    - Name: "Power EM5.3"
-      DisplayName: "Study A/C"
+    # - Name: "Power EM4.1"
+    #   DisplayName: "Living & Beds"
+    # - Name: "Power EM4.2"
+    #   DisplayName: "Kitchen & Laundry"
+    # - Name: "Power EM4.3"
+    #   DisplayName: "Cooking"
+    # - Name: "Power EM5.1"
+    #   DisplayName: "Living A/C"
+    # - Name: "Power EM5.2"
+    #   DisplayName: "Living Room"
+    # - Name: "Power EM5.3"
+    #   DisplayName: "Study A/C"
   TempProbes:
     - Name: "Temp Pool Water"
       DisplayName: "Pool"
