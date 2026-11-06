@@ -644,6 +644,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Website
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -660,6 +678,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#current-price-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Price field
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1146,6 +1194,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#current-price-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Price field
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1193,6 +1260,23 @@
 </tr>
 </tbody>
 </table>
+<h2 id="current-price-field">Current Price field</h2>
+<p>Each output card shows a <strong>Current Price</strong> for electricity <em>right now</em>, together with a small
+label naming the basis the price comes from:</p>
+<ul>
+<li><strong>Amber &lt;channel&gt;</strong> — the live Amber price for the output's channel, used when the
+  output is in <code>BestPrice</code> mode. This is the real current price and may be zero or even
+  negative (for example when solar is exporting), in which case the negative value is shown
+  as-is rather than hidden.</li>
+<li><strong>&lt;schedule&gt; schedule</strong> — the price from the output's operating schedule, used when the
+  output is in <code>Schedule</code> mode, or as a fallback when Amber price data is unavailable.</li>
+<li><strong>Default price</strong> — the configured <code>General.DefaultPrice</code>, used only when neither an Amber
+  price nor a schedule price is available.</li>
+</ul>
+<p>Because the basis depends on each output's <code>Mode</code>, <code>AmberChannel</code> and <code>Schedule</code>, two outputs
+can legitimately show different Current Prices; the basis label makes clear why. Outputs that
+share the same basis always show the same Current Price. (The <strong>Forecast Price</strong> still differs
+per output, as it reflects each output's own run plan.)</p>
 
 
 
