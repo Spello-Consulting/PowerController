@@ -175,7 +175,7 @@ Outputs:
     MaxAppOffTime: 60
   - Name: Solar Pump   # Power Breaker 3
     DeviceOutput: Solar Pump
-    Mode: Schedule
+    Mode: BestPrice
     Schedule: Pool Solar
     AmberChannel: general
     DaysOfHistory: 14
@@ -187,8 +187,8 @@ Outputs:
     MaxShortfallHours: 0
     MinOnTime: 10        # Minimum minutes to stay on once turned on
     MinOffTime: 5        # Optional: minimum minutes to stay off (prevent rapid cycling)
-    MaxBestPrice: 25.0
-    MaxPriorityPrice: 30.0
+    MaxBestPrice: 26.0
+    MaxPriorityPrice: 32.0
     DeviceMeter: Solar Pump Meter
     StopOnExit: False
     ParentOutput: Pool Pump
@@ -564,6 +564,7 @@ HeartbeatMonitor:
   HeartbeatTimeout: 5
   # How often to post the state to the heartbeat monitor (in seconds)
   Frequency: 20
+
 
 OperatingSchedules:
   - Name: General

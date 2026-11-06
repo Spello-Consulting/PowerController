@@ -78,7 +78,10 @@
             <td class="data-table-value" data-field="actual_energy_used">{{ output.actual_energy_used }}</td>
 
             <td class="data-table-label">Current Price:</td>
-            <td class="data-table-value" data-field="current_price">{{ output.current_price }}</td>
+            <td class="data-table-value">
+              <span data-field="current_price">{{ output.current_price }}</span>
+              <span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span>
+            </td>
 
             <td class="data-table-label">Actual Cost:</td>
             <td class="data-table-value" data-field="actual_cost">{{ output.actual_cost }}</td>
@@ -146,7 +149,10 @@
             <td class="data-table-value" data-field="start_stop_time">{{ output.stopping_at if output.is_on else output.next_start_time }}</td>
 
             <td class="data-table-label">Current Price:</td>
-            <td class="data-table-value" data-field="current_price">{{ output.current_price }}</td>
+            <td class="data-table-value">
+              <span data-field="current_price">{{ output.current_price }}</span>
+              <span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span>
+            </td>
           </tr>
 
           <tr>

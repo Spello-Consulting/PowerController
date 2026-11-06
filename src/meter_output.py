@@ -19,7 +19,7 @@ from org_enums import AppMode, RunPlanMode, StateReasonOff, StateReasonOn, Syste
 from sc_foundation import DateHelper
 
 from local_enumerations import DEFAULT_PRICE, AmberChannel, OutputStatusData
-from helpers import get_currency_symbols
+from helpers import get_currency_symbols, resolve_current_price
 from run_history import RunHistory
 
 if TYPE_CHECKING:
@@ -242,27 +242,34 @@ class MeterOutput:
 
     # --- Pricing helpers ---
     def _get_price(self, as_at_time: dt.datetime | None = None) -> float:
-        """Get the current energy price based on the output's pricing configuration.
+        """Get the energy price on this output's pricing basis (Amber, schedule, or default).
 
         Args:
             as_at_time: The datetime to get the price for. If None, uses current time
 
         Returns:
-            The price in c/kWh
+            The price in c/kWh (may be zero or negative)
         """
-        if as_at_time is None:
-            as_at_time = DateHelper.now()
-        if self.device_mode == RunPlanMode.BEST_PRICE:
-            price = self.pricing.get_price(as_at_time=as_at_time, channel_id=self.amber_channel)
-            if price is not None and price > 0.0:
-                return float(price)
+        return self._get_price_and_basis(as_at_time)[0]
 
-        if self.schedule:
-            price = self.scheduler.get_price(self.schedule, as_at_time)
-            if price is not None and price > 0.0:
-                return float(price)
+    def _get_price_and_basis(self, as_at_time: dt.datetime | None = None) -> tuple[float, str]:
+        """Get the price and the basis it was derived from, for the web app.
 
-        return float(self.default_price)
+        Args:
+            as_at_time: The datetime to get the price for. If None, uses current time
+
+        Returns:
+            tuple[float, str]: The price and a human-readable basis label.
+        """
+        return resolve_current_price(
+            pricing=self.pricing,
+            scheduler=self.scheduler,
+            device_mode=self.device_mode,
+            amber_channel=self.amber_channel,
+            schedule=self.schedule,
+            schedule_name=self.schedule_name,
+            as_at_time=as_at_time,
+        )
 
     # --- State / CSV / UI ---
     def get_save_object(self, view: Any) -> dict[str, Any]:
@@ -292,7 +299,7 @@ class MeterOutput:
         actual_hours = float(today["ActualHours"]) if today else 0.0
 
         power_draw = (view.get_meter_power(self.device_meter_id) or 0.0) if self.device_meter_id else 0.0
-        current_price = self._get_price()
+        current_price, current_price_basis = self._get_price_and_basis()
 
         reason_text = self.reason.value if self.reason is not None else "Monitoring"
 
@@ -323,7 +330,8 @@ class MeterOutput:
             "stopping_at": None,
             "reason": reason_text,
             "power_draw": f"{power_draw:.0f}W" if power_draw else "None",
-            "current_price": f"{current_price:.1f} {self.currency_minor_symbol}/kWh" if current_price > 0 else "N/A",
+            "current_price": f"{current_price:.1f} {self.currency_minor_symbol}/kWh",
+            "current_price_basis": current_price_basis,
         }
 
     def get_schedule(self) -> dict | None:

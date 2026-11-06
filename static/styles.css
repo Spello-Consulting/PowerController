@@ -335,6 +335,18 @@ main { display: block; }
   white-space: nowrap;
 }
 
+/* Small muted label showing which basis the Current Price came from (issue #117) */
+.price-basis {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--th-color);
+  white-space: nowrap;
+}
+.price-basis:empty {
+  display: none;
+}
+
 .data-table.full   { display: table; }
 .data-table.compact { display: none; }
 

@@ -40,7 +40,7 @@ from pricing import PricingManager
 from run_history import RunHistory
 from run_plan import RunPlanner
 from scheduler import Scheduler
-from helpers import get_currency_symbols
+from helpers import get_currency_symbols, resolve_current_price
 from output_constraint import OutputConstraint
 from ups_integration import UPSIntegration
 from weather_integration import WeatherIntegration
@@ -395,6 +395,7 @@ class OutputManager:  # noqa: PLR0904
         else:
             stopping_at = None
         power_draw = view.get_meter_power(self.device_meter_id) if self.device_meter_id else 0
+        current_price, current_price_basis = self._get_current_price_and_basis()
         # An in-flight action request means a switch/sequence is currently
         # running for this output, so it cannot accept a new mode change yet.
         # The web app disables the mode buttons while this is true (issue #115).
@@ -433,7 +434,8 @@ class OutputManager:  # noqa: PLR0904
             "stopping_at": stopping_at,
             "reason": reason_text,
             "power_draw": f"{power_draw:.0f}W" if power_draw else "None",
-            "current_price": f"{self._get_current_price():.1f} {self.currency_minor_symbol}/kWh" if self._get_current_price() > 0 else "N/A",
+            "current_price": f"{current_price:.1f} {self.currency_minor_symbol}/kWh",
+            "current_price_basis": current_price_basis,
         }
         total_cost = actual_cost + forecast_cost
         data["total_cost"] = f"{self.currency_major_symbol}{total_cost:.2f}"
@@ -1309,19 +1311,27 @@ class OutputManager:  # noqa: PLR0904
         return target_hours
 
     def _get_current_price(self) -> float:
-        """Get the current price from either PricingManager or ScheduleManager depending on the context.
+        """Get the current price on this output's pricing basis (Amber, schedule, or default).
 
         Returns:
-            float: The current price.
+            float: The current price (may be zero or negative).
         """
-        price = None
-        if self.device_mode == RunPlanMode.BEST_PRICE:
-            price = self.pricing.get_current_price(self.amber_channel)
+        return self._get_current_price_and_basis()[0]
 
-        if self.device_mode == RunPlanMode.SCHEDULE or not price:
-            # Scheduler will always return a price
-            price = self.scheduler.get_current_price(self.schedule)  # pyright: ignore[reportArgumentType]
-        return price
+    def _get_current_price_and_basis(self) -> tuple[float, str]:
+        """Get the current price and the basis it was derived from, for the web app.
+
+        Returns:
+            tuple[float, str]: The current price and a human-readable basis label.
+        """
+        return resolve_current_price(
+            pricing=self.pricing,
+            scheduler=self.scheduler,
+            device_mode=self.device_mode,
+            amber_channel=self.amber_channel,
+            schedule=self.schedule,
+            schedule_name=self.schedule_name,
+        )
 
     def _get_status_data(self, view: SmartDeviceView) -> OutputStatusData:
         """Get the status data needed by RunHistory.
