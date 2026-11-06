@@ -3,6 +3,7 @@ import datetime as dt
 import operator
 import os
 from pathlib import Path
+from typing import Any
 
 # from zoneinfo import ZoneInfo
 import requests
@@ -152,6 +153,38 @@ class PricingManager:
             return 0.0
 
         return entry["Price"] or 0.0
+
+    def get_price_or_none(self, as_at_time: dt.datetime, channel_id: AmberChannel = AmberChannel.GENERAL) -> float | None:
+        """Fetches the price for the specified time, distinguishing missing data from a non-positive price.
+
+        Unlike get_price (which returns 0.0 both when a price is genuinely zero and when no data is
+        available), this returns None only when no price data is available for the channel at that
+        time. A real price of zero or a negative price is returned as-is, so callers can tell a
+        genuine low/zero/negative price apart from "no data" and fall back appropriately.
+
+        Args:
+            as_at_time (dt.datetime): The datetime to get the price for.
+            channel_id (AmberChannel): The ID of the channel to get the price for.
+
+        Returns:
+            price (float | None): The price in AUD/kWh (may be zero or negative), or None if the
+                channel is invalid or no price data is available for that time.
+        """
+        if not self._is_channel_valid(channel_id):
+            self.logger.log_message(f"Invalid channel ID '{channel_id}' specified when getting price.", "error")
+            return None
+
+        assert isinstance(self.raw_price_data, list)
+        raw_data: list[dict[str, Any]] = next((channel.get("PriceData", []) for channel in self.raw_price_data if channel.get("Name") == channel_id), [])
+        if not raw_data:
+            return None
+
+        entry = next((e for e in raw_data if isinstance(e.get("StartDateTime"), dt.datetime) and isinstance(e.get("EndDateTime"), dt.datetime) and e["StartDateTime"] <= as_at_time < e["EndDateTime"]), None)
+        if entry is None:
+            return None
+
+        price = entry.get("Price")
+        return float(price) if price is not None else None
 
     def get_run_plan(self,
                      required_hours: float,

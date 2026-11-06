@@ -9,3 +9,22 @@ Settings for the built-in web server that provides a web interface to view and c
 | PageAutoRefresh | How often, in seconds, to refresh the live data on the web page. The page requests a fresh snapshot over its existing WebSocket connection (it does **not** reload the whole page), so control buttons keep working between refreshes. Set to 0 to disable the periodic refresh (live updates still arrive over the WebSocket whenever state changes). |
 | DebugMode | Enable or disable debug mode for the web server (should be False in production). |
 | AccessKey | An access key to secure the web interface. Alternatively, set the WEBAPP_ACCESS_KEY environment variable. Leave blank to disable access control. |
+
+## Current Price field
+
+Each output card shows a **Current Price** for electricity *right now*, together with a small
+label naming the basis the price comes from:
+
+- **Amber &lt;channel&gt;** — the live Amber price for the output's channel, used when the
+  output is in `BestPrice` mode. This is the real current price and may be zero or even
+  negative (for example when solar is exporting), in which case the negative value is shown
+  as-is rather than hidden.
+- **&lt;schedule&gt; schedule** — the price from the output's operating schedule, used when the
+  output is in `Schedule` mode, or as a fallback when Amber price data is unavailable.
+- **Default price** — the configured `General.DefaultPrice`, used only when neither an Amber
+  price nor a schedule price is available.
+
+Because the basis depends on each output's `Mode`, `AmberChannel` and `Schedule`, two outputs
+can legitimately show different Current Prices; the basis label makes clear why. Outputs that
+share the same basis always show the same Current Price. (The **Forecast Price** still differs
+per output, as it reflects each output's own run plan.)

@@ -83,7 +83,7 @@
 
       // Simple field updates
       var fields = [
-        "actual_energy_used", "actual_cost", "current_price",
+        "actual_energy_used", "actual_cost", "current_price", "current_price_basis",
         "target_hours", "forecast_energy_used", "forecast_price", "forecast_cost",
         "actual_hours", "total_energy_used", "average_price", "total_cost",
         "required_hours", "power_draw", "planned_hours"

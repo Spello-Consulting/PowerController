@@ -1,14 +1,66 @@
 """General helper functions"""
 import csv
+import datetime as dt
 import re
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from sc_foundation import SCConfigManager
+from org_enums import RunPlanMode
+from sc_foundation import DateHelper, SCConfigManager
 
 from local_enumerations import (
     DEFAULT_CURRENCY_SYMBOL,
     DEFAULT_CURRENCY_SUBUNIT_SYMBOL,
+    AmberChannel,
 )
+
+if TYPE_CHECKING:
+    from pricing import PricingManager
+    from scheduler import Scheduler
+
+
+def resolve_current_price(
+    *,
+    pricing: "PricingManager",
+    scheduler: "Scheduler",
+    device_mode: RunPlanMode,
+    amber_channel: AmberChannel,
+    schedule: dict[str, Any] | None,
+    schedule_name: str | None,
+    as_at_time: dt.datetime | None = None,
+) -> tuple[float, str]:
+    """Resolve an output's price and the basis it comes from, for display and costing.
+
+    This is the single source of truth for an output's "current price" so that every
+    output type (smart device, meter, TeslaMate) resolves the price identically. A
+    genuine zero or negative Amber price is kept as-is; the schedule/default fallback is
+    used only when Amber price data is actually unavailable for the channel at that time.
+
+    Args:
+        pricing (PricingManager): The pricing manager used for Amber prices.
+        scheduler (Scheduler): The scheduler used for schedule prices and the default price.
+        device_mode (RunPlanMode): The output's pricing mode (BEST_PRICE or SCHEDULE).
+        amber_channel (AmberChannel): The Amber channel used when in BEST_PRICE mode.
+        schedule (dict | None): The output's resolved schedule, if any.
+        schedule_name (str | None): The name of the output's schedule, used in the label.
+        as_at_time (dt.datetime | None): The time to price for. Defaults to now.
+
+    Returns:
+        tuple[float, str]: The price (may be zero or negative) and a human-readable basis
+            label (e.g. "Amber general", "Pool Solar schedule", "Default price").
+    """
+    at_time = as_at_time or DateHelper.now()
+
+    if device_mode == RunPlanMode.BEST_PRICE:
+        amber_price = pricing.get_price_or_none(as_at_time=at_time, channel_id=amber_channel)
+        if amber_price is not None:
+            return float(amber_price), f"Amber {amber_channel}"
+
+    if schedule is not None:
+        return float(scheduler.get_price(schedule, at_time)), f"{schedule_name} schedule"
+
+    return float(scheduler.default_price), "Default price"
+
 
 def get_currency_symbols(config: SCConfigManager) -> tuple[str, str]:
     """Get the major and minor currency symbols from the config file or failing that use the defaults.
