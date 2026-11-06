@@ -78,10 +78,7 @@
             <td class="data-table-value" data-field="actual_energy_used">{{ output.actual_energy_used }}</td>
 
             <td class="data-table-label">Current Price:</td>
-            <td class="data-table-value">
-              <span data-field="current_price">{{ output.current_price }}</span>
-              <span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span>
-            </td>
+            <td class="data-table-value" data-field="current_price">{{ output.current_price }}</td>
 
             <td class="data-table-label">Actual Cost:</td>
             <td class="data-table-value" data-field="actual_cost">{{ output.actual_cost }}</td>
@@ -94,8 +91,8 @@
             <td class="data-table-label">Planned Energy:</td>
             <td class="data-table-value" data-field="forecast_energy_used">{{ output.forecast_energy_used }}</td>
 
-            <td class="data-table-label">Forecast Price:</td>
-            <td class="data-table-value" data-field="forecast_price">{{ output.forecast_price }}</td>
+            <td class="data-table-label">Price Basis:</td>
+            <td class="data-table-value"><span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span></td>
 
             <td class="data-table-label">Forecast Cost:</td>
             <td class="data-table-value" data-field="forecast_cost">{{ output.forecast_cost }}</td>
@@ -108,8 +105,8 @@
             <td class="data-table-label">Total Energy:</td>
             <td class="data-table-value" data-field="total_energy_used">{{ output.total_energy_used }}</td>
 
-            <td class="data-table-label">Average Price:</td>
-            <td class="data-table-value" data-field="average_price">{{ output.average_price }}</td>
+            <td class="data-table-label">Forecast Price:</td>
+            <td class="data-table-value" data-field="forecast_price">{{ output.forecast_price }}</td>
 
             <td class="data-table-label">Total Cost:</td>
             <td class="data-table-value" data-field="total_cost">{{ output.total_cost }}</td>
@@ -121,8 +118,8 @@
             <td class="data-table-label">Power Draw:</td>
             <td class="data-table-value" data-field="power_draw">{{ output.power_draw }}</td>
 
-            <td class="data-table-label">&nbsp;</td>
-            <td class="data-table-value">&nbsp;</td>
+            <td class="data-table-label">Average Price:</td>
+            <td class="data-table-value" data-field="average_price">{{ output.average_price }}</td>
 
             <td class="data-table-label">&nbsp;</td>
             <td class="data-table-value">&nbsp;</td>
@@ -149,34 +146,39 @@
             <td class="data-table-value" data-field="start_stop_time">{{ output.stopping_at if output.is_on else output.next_start_time }}</td>
 
             <td class="data-table-label">Current Price:</td>
-            <td class="data-table-value">
-              <span data-field="current_price">{{ output.current_price }}</span>
-              <span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span>
-            </td>
+            <td class="data-table-value" data-field="current_price">{{ output.current_price }}</td>
           </tr>
 
           <tr>
             <td class="data-table-label">Target Hours:</td>
             <td class="data-table-value" data-field="target_hours">{{ output.target_hours }}</td>
 
-            <td class="data-table-label">Forecast Price:</td>
-            <td class="data-table-value" data-field="forecast_price">{{ output.forecast_price }}</td>
+            <td class="data-table-label">Price Basis:</td>
+            <td class="data-table-value"><span class="price-basis" data-field="current_price_basis">{{ output.current_price_basis }}</span></td>
           </tr>
 
           <tr>
             <td class="data-table-label">Actual Hours:</td>
             <td class="data-table-value" data-field="actual_hours">{{ output.actual_hours }}</td>
 
-            <td class="data-table-label">Average Price:</td>
-            <td class="data-table-value" data-field="average_price">{{ output.average_price }}</td>
+            <td class="data-table-label">Forecast Price:</td>
+            <td class="data-table-value" data-field="forecast_price">{{ output.forecast_price }}</td>
           </tr>
 
           <tr>
             <td class="data-table-label">Planned Hours:</td>
             <td class="data-table-value" data-field="planned_hours">{{ output.planned_hours }}</td>
 
+            <td class="data-table-label">Average Price:</td>
+            <td class="data-table-value" data-field="average_price">{{ output.average_price }}</td>
+          </tr>
+
+          <tr>
             <td class="data-table-label">Power Draw:</td>
             <td class="data-table-value" data-field="power_draw">{{ output.power_draw }}</td>
+
+            <td class="data-table-label">&nbsp;</td>
+            <td class="data-table-value">&nbsp;</td>
           </tr>
         </table>
       </div>
