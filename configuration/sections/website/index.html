@@ -705,6 +705,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#mobile-summary-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile summary page
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1211,6 +1222,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#mobile-summary-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile summary page
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1277,6 +1299,22 @@ label naming the basis the price comes from:</p>
 can legitimately show different Current Prices; the basis label makes clear why. Outputs that
 share the same basis always show the same Current Price. (The <strong>Forecast Price</strong> still differs
 per output, as it reflects each output's own run plan.)</p>
+<h2 id="mobile-summary-page">Mobile summary page</h2>
+<p>The home page has a <strong>📱 Mobile view</strong> link that opens a compact, phone-optimised summary at
+<code>/mobile</code>. It is designed to be read at a glance on a device such as an iPhone, with the text
+scaled up to fill the screen and (for a typical number of probes and outputs) fit on a single
+page without scrolling. The page is <strong>view-only</strong> — it has no control buttons — and it updates
+live over the same WebSocket connection as the home page.</p>
+<p>It shows:</p>
+<ul>
+<li><strong>Temperatures</strong> — the latest reading for every probe in the <code>TempProbeLogging</code> section. The
+  last-reading time is not shown. A reading that is out of date (older than
+  <code>TempProbeLogging.LastReadingWithinMinutes</code>) is shown as <strong>N/A</strong>.</li>
+<li><strong>Outputs</strong> — every output that is not hidden (<code>Outputs[#].HideFromWebApp</code> is not <code>True</code>),
+  each with a coloured dot showing its state — <strong>green</strong> when on, <strong>black/grey</strong> when off —
+  and that output's <strong>Current Price</strong> (on the output's own pricing basis, as described above).</li>
+</ul>
+<p>The link and the page carry the <code>?key=</code> access key when one is configured.</p>
 
 
 
