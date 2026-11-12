@@ -257,6 +257,40 @@ def _register_routes(
             },
         )
 
+    @app.get("/mobile", response_class=HTMLResponse)
+    async def mobile(request: Request) -> Any:
+        """Render the phone-optimised summary page (issue #119).
+
+        Shows, for a quick glance on a mobile device: each temperature probe's
+        current reading ("N/A" when stale), each visible output's on/off state
+        as a coloured dot, and that output's current price. View-only.
+
+        Returns:
+            A rendered ``mobile.html``, a 503 response when no snapshot is
+            available yet, or a 403 response when the access key is invalid.
+        """
+        key = request.query_params.get("key")
+        if not _validate_access_key(config, logger, key):
+            return HTMLResponse("Access forbidden.", status_code=403)
+
+        snapshot = await asyncio.to_thread(controller.get_webapp_data)
+        if not snapshot:
+            logger.log_message("No web output data available yet", "warning")
+            return HTMLResponse("no output data available yet", status_code=503)
+
+        global_data = snapshot.get("global", {})
+        return templates.TemplateResponse(
+            request,
+            "mobile.html",
+            {
+                "app_label": _app_label(global_data),
+                "global_data": global_data,
+                "outputs": snapshot.get("outputs", {}),
+                "page_auto_refresh": _page_auto_refresh(),
+                "access_key": key or "",
+            },
+        )
+
     @app.get("/system", response_class=HTMLResponse)
     async def system(request: Request) -> Any:
         key = request.query_params.get("key")

@@ -36,6 +36,8 @@
   --badge-off-text: #c0392b;
   --conn-online: #1a9d4b;
   --conn-offline: #e8890c;
+  --indicator-on: #00c853;
+  --indicator-off: #000000;
 }
 
 /* Dark theme: applied when explicitly chosen. */
@@ -73,6 +75,8 @@
   --badge-off-text: #f19a94;
   --conn-online: #4fd07a;
   --conn-offline: #f0a742;
+  --indicator-on: #00c853;
+  --indicator-off: #55606f;
 }
 
 /* ... or when following the system preference (and not forced light). */
@@ -112,6 +116,8 @@
     --badge-off-text: #f19a94;
     --conn-online: #4fd07a;
     --conn-offline: #f0a742;
+    --indicator-on: #00c853;
+    --indicator-off: #55606f;
   }
 }
 
@@ -472,4 +478,128 @@ main { display: block; }
 @media (min-width: 481px) {
   .data-table.compact { display: none; }
   .data-table.full    { display: table; }
+}
+
+/* ── Status indicators (shared with PowerControllerViewer) ───────────────────── */
+
+.status-indicator {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin: 0 0.2em 0 0;
+  flex: none;
+}
+.status-indicator--active   { background: var(--indicator-on); }
+.status-indicator--inactive { background: var(--indicator-off); }
+
+/* ── Mobile summary page (/mobile, issue #119) ───────────────────────────────── */
+/* Fills the viewport and scales type so probe/output values are easy to read on a
+   phone without scrolling. clamp()/dvh are intentional (iPhone-targeted). */
+
+.mobile-body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mobile-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.mobile-header {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--header);
+  color: var(--header-text);
+  border-bottom: 1px solid var(--header-border);
+  padding: 0.6rem 1rem;
+}
+.mobile-title {
+  font-size: clamp(1rem, 5vw, 1.4rem);
+  font-weight: 600;
+}
+.mobile-fullview {
+  color: var(--header-text);
+  text-decoration: none;
+  font-size: clamp(0.8rem, 3.5vw, 1rem);
+  white-space: nowrap;
+  opacity: 0.85;
+}
+.mobile-fullview:hover { opacity: 1; }
+
+.mobile-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vh, 2rem);
+  padding: clamp(0.75rem, 3vh, 2rem) clamp(0.75rem, 4vw, 2rem);
+  min-height: 0;
+}
+
+.mobile-section {
+  display: flex;
+  flex-direction: column;
+}
+.mobile-section-title {
+  margin: 0 0 clamp(0.25rem, 1.5vh, 0.75rem);
+  font-size: clamp(0.8rem, 3.5vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mobile-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mobile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: clamp(0.4rem, 1.6vh, 1rem) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(1.1rem, 6vw, 2rem);
+}
+.mobile-row:last-child { border-bottom: none; }
+.mobile-row-name {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--value-text);
+}
+.mobile-row-value {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--value-text);
+}
+
+.mobile-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--header);
+  color: var(--header-text);
+  border-top: 1px solid var(--header-border);
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
 }
