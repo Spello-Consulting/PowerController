@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ app_label }} — Mobile</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+    (function () {
+      var t = localStorage.getItem("theme") || "system";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+</head>
+<body class="mobile-body">
+  <div class="mobile-page">
+    <header class="mobile-header">
+      <span class="mobile-title">{{ app_label }}</span>
+      <a class="mobile-fullview" href="/{% if access_key %}?key={{ access_key }}{% endif %}">Full view ›</a>
+    </header>
+
+    <main class="mobile-main">
+      {% if global_data.TempProbeData and global_data.TempProbeData|length > 0 %}
+      <section class="mobile-section" id="mobile-probes">
+        <h2 class="mobile-section-title">Temperatures</h2>
+        <ul class="mobile-list">
+          {% for probe in global_data.TempProbeData %}
+          <li class="mobile-row" data-probe-name="{{ probe.name }}">
+            <span class="mobile-row-name">{{ probe.name }}</span>
+            <span class="mobile-row-value" data-probe-field="temperature">
+              {%- if probe.temperature is not none -%}
+                {{ "%.1f"|format(probe.temperature) }} °C
+              {%- else -%}
+                N/A
+              {%- endif -%}
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      <section class="mobile-section" id="mobile-outputs">
+        <h2 class="mobile-section-title">Outputs</h2>
+        <ul class="mobile-list">
+          {% for output_id, output in outputs.items() %}
+          <li class="mobile-row" data-output-id="{{ output.id }}">
+            <span class="mobile-row-name">
+              <span class="status-indicator {{ 'status-indicator--active' if output.is_on else 'status-indicator--inactive' }}"
+                    data-field="indicator"></span>
+              {{ output.name }}
+            </span>
+            <span class="mobile-row-value" data-field="current_price">{{ output.current_price }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </main>
+
+    <footer class="mobile-footer">
+      <span id="conn-status" class="conn-offline">connecting…</span>
+      <span>Updated <span id="last-refresh">—</span></span>
+    </footer>
+  </div>
+
+  <script>
+    window.__ACCESS_KEY__ = {{ (access_key or "") | tojson }};
+    window.__PAGE_AUTO_REFRESH__ = {{ (page_auto_refresh or 0) | tojson }};
+  </script>
+  <script src="/static/mobile.js"></script>
+</body>
+</html>

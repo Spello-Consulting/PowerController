@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+  <div class="home-actions">
+    <a class="mobile-view-link" href="/mobile{% if access_key %}?key={{ access_key }}{% endif %}">📱 Mobile view</a>
+  </div>
+
   {% if global_data.TempProbeData and global_data.TempProbeData|length > 0 %}
   <div class="card" id="temp-probes">
     <div class="card-header">

@@ -28,3 +28,22 @@ Because the basis depends on each output's `Mode`, `AmberChannel` and `Schedule`
 can legitimately show different Current Prices; the basis label makes clear why. Outputs that
 share the same basis always show the same Current Price. (The **Forecast Price** still differs
 per output, as it reflects each output's own run plan.)
+
+## Mobile summary page
+
+The home page has a **📱 Mobile view** link that opens a compact, phone-optimised summary at
+`/mobile`. It is designed to be read at a glance on a device such as an iPhone, with the text
+scaled up to fill the screen and (for a typical number of probes and outputs) fit on a single
+page without scrolling. The page is **view-only** — it has no control buttons — and it updates
+live over the same WebSocket connection as the home page.
+
+It shows:
+
+- **Temperatures** — the latest reading for every probe in the `TempProbeLogging` section. The
+  last-reading time is not shown. A reading that is out of date (older than
+  `TempProbeLogging.LastReadingWithinMinutes`) is shown as **N/A**.
+- **Outputs** — every output that is not hidden (`Outputs[#].HideFromWebApp` is not `True`),
+  each with a coloured dot showing its state — **green** when on, **black/grey** when off —
+  and that output's **Current Price** (on the output's own pricing basis, as described above).
+
+The link and the page carry the `?key=` access key when one is configured.

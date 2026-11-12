@@ -238,6 +238,116 @@ class TestConfigPage:
 
 
 # ---------------------------------------------------------------------------
+# HTTP GET /mobile (issue #119)
+# ---------------------------------------------------------------------------
+
+
+MOBILE_WEBAPP_DATA = {
+    "global": {
+        "AppLabel": "Test PowerController",
+        "TempProbeData": [
+            {"name": "Pool", "temperature": 21.5, "last_logged_time": "10:00"},
+            {"name": "Roof", "temperature": None, "last_logged_time": ""},
+        ],
+    },
+    "outputs": {
+        "pool_pump": {
+            "id": "pool_pump",
+            "name": "Pool Pump",
+            "is_on": True,
+            "current_price": "13.9 c/kWh",
+            "current_price_basis": "Amber general",
+        },
+        "network_rack": {
+            "id": "network_rack",
+            "name": "Network Rack",
+            "is_on": False,
+            "current_price": "20.0 c/kWh",
+            "current_price_basis": "Default price",
+        },
+    },
+}
+
+
+class TestMobilePage:
+    def _render(self, logger, data=None, access_key=None, url="/mobile"):
+        cfg = _make_config(access_key=access_key)
+        ctrl = _make_controller(webapp_data=data or MOBILE_WEBAPP_DATA)
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c:
+            return c.get(url)
+
+    def test_returns_200_when_no_key_required(self, logger):
+        resp = self._render(logger)
+        assert resp.status_code == 200
+        assert "text/html" in resp.headers.get("content-type", "")
+
+    def test_returns_503_when_no_data_available(self, no_data_client):
+        resp = no_data_client.get("/mobile")
+        assert resp.status_code == 503
+
+    def test_forbidden_with_wrong_key(self, logger):
+        resp = self._render(logger, access_key="webapp-secret", url="/mobile?key=wrong")
+        assert resp.status_code == 403
+
+    def test_allowed_with_correct_key(self, logger):
+        resp = self._render(
+            logger, access_key="webapp-secret", url="/mobile?key=webapp-secret"
+        )
+        assert resp.status_code == 200
+
+    def test_shows_output_names_and_prices(self, logger):
+        body = self._render(logger).text
+        assert "Pool Pump" in body
+        assert "13.9 c/kWh" in body
+        assert "Network Rack" in body
+        assert "20.0 c/kWh" in body
+
+    def test_output_indicator_reflects_state(self, logger):
+        body = self._render(logger).text
+        # An on output gets the active dot; an off output the inactive dot.
+        assert "status-indicator--active" in body
+        assert "status-indicator--inactive" in body
+
+    def test_stale_probe_shows_na(self, logger):
+        body = self._render(logger).text
+        assert "Pool" in body
+        assert "21.5" in body
+        # The Roof probe has temperature None (stale) and must render as N/A.
+        assert "N/A" in body
+
+    def test_hidden_output_not_shown(self, logger):
+        # HideFromWebApp outputs are already excluded from the snapshot, so a
+        # snapshot without them simply must not render them.
+        data = copy.deepcopy(MOBILE_WEBAPP_DATA)
+        del data["outputs"]["network_rack"]
+        body = self._render(logger, data=data).text
+        assert "Network Rack" not in body
+        assert "Pool Pump" in body
+
+
+# ---------------------------------------------------------------------------
+# HTTP GET / — Mobile view link (issue #119)
+# ---------------------------------------------------------------------------
+
+
+class TestHomeMobileLink:
+    def test_home_has_mobile_view_link(self, client):
+        resp = client.get("/")
+        if resp.status_code == 200:
+            assert 'href="/mobile' in resp.text
+
+    def test_mobile_link_carries_access_key(self, logger):
+        cfg = _make_config(access_key="webapp-secret")
+        ctrl = _make_controller()
+        app, _ = create_asgi_app(ctrl, cfg, logger)
+        with TestClient(app) as c:
+            resp = c.get("/?key=webapp-secret")
+            assert resp.status_code == 200
+            assert "/mobile?key=webapp-secret" in resp.text
+
+
+# ---------------------------------------------------------------------------
 # WebSocket /ws — initial snapshot
 # ---------------------------------------------------------------------------
 
