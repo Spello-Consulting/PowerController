@@ -494,28 +494,6 @@ main { display: block; }
 .status-indicator--active   { background: var(--indicator-on); }
 .status-indicator--inactive { background: var(--indicator-off); }
 
-/* ── Home page: Mobile view link ─────────────────────────────────────────────── */
-
-.home-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0.5rem 0.75rem 0;
-}
-.mobile-view-link {
-  display: inline-block;
-  color: var(--btn-text);
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-border);
-  border-radius: 4px;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.85rem;
-  text-decoration: none;
-}
-.mobile-view-link:hover {
-  background: var(--btn-hover-bg);
-  border-color: var(--btn-hover-border);
-}
-
 /* ── Mobile summary page (/mobile, issue #119) ───────────────────────────────── */
 /* Fills the viewport and scales type so probe/output values are easy to read on a
    phone without scrolling. clamp()/dvh are intentional (iPhone-targeted). */
