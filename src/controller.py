@@ -9,7 +9,7 @@ import time
 from collections.abc import Callable
 from enum import StrEnum
 from pathlib import Path
-from threading import Event, RLock
+from threading import Event, Lock
 from typing import Any
 
 from org_enums import AppMode, StateReasonOff, SystemState
@@ -75,6 +75,30 @@ class LookupMode(StrEnum):
 
 
 TRIM_LOGFILE_INTERVAL = dt.timedelta(hours=2)
+
+
+def describe_exception(e: BaseException) -> str:
+    """Describe an exception, including its chained cause.
+
+    ``JSONEncoder.save_to_file`` re-raises errors as a bare ``RuntimeError`` (no message)
+    chained from the original, so ``str(e)`` alone is empty. Walking the cause chain
+    recovers the real error, e.g. the ``FileNotFoundError`` behind a lost save race.
+
+    Args:
+        e (BaseException): The exception to describe.
+
+    Returns:
+        str: A string such as ``"RuntimeError <- FileNotFoundError: [Errno 2] ..."``.
+    """
+    parts: list[str] = []
+    seen: set[int] = set()
+    current: BaseException | None = e
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        text = str(current)
+        parts.append(f"{type(current).__name__}: {text}" if text else type(current).__name__)
+        current = current.__cause__ or current.__context__
+    return " <- ".join(parts)
 
 
 class PowerController:
@@ -147,7 +171,15 @@ class PowerController:
         self.pricing = PricingManager(self.config, self.logger)
         self.currency_major_symbol, self.currency_minor_symbol = get_currency_symbols(config)
 
-        self._io_shutdown_lock = RLock()  # Serialize state/CSV writes during shutdown
+        # Serialises state-file writes. The controller thread (run loop exit) and
+        # ThreadManager.stop_all() (main thread) can both trigger a save during shutdown;
+        # concurrent writers share the same .tmp file and the loser fails with
+        # FileNotFoundError. See issue #121.
+        self._save_lock = Lock()
+        # Ensures shutdown() does its work only once, even though on SIGTERM it is called
+        # from two threads (the controller thread and ThreadManager.stop_all()).
+        self._shutdown_lock = Lock()
+        self._shutdown_done = False
 
         # Optional callback used to notify the webapp (WebSocket) layer that a new snapshot should be pushed.
         # This is set by main.py once the ASGI webapp is initialised.
@@ -268,18 +300,29 @@ class PowerController:
 
         self.shutdown()
 
-    def shutdown(self):
-        """Shutdown the power controller, turning off outputs if configured to do so."""
-        with self._io_shutdown_lock:
-            self.logger.log_message("Starting PowerController shutdown...", "debug")
-            view = self._get_latest_status_view()
-            for output in self.outputs:
-                if output.shutdown(view):
-                    self._force_output_off(output, view)
+    def shutdown(self) -> None:
+        """Shutdown the power controller, turning off outputs if configured to do so.
 
-            view = self._get_latest_status_view()
-            self._save_system_state(view, force_post=True)
-            self.logger.log_message("PowerController shutdown complete.", "detailed")
+        Safe to call more than once and from multiple threads: on SIGTERM this is invoked
+        both by the controller thread when its run loop exits and by
+        ``ThreadManager.stop_all()`` from the main thread. Only the first call does any
+        work, so outputs are never turned off twice and the state is saved once.
+        See issue #121.
+        """
+        with self._shutdown_lock:
+            if self._shutdown_done:
+                return
+            self._shutdown_done = True
+
+        self.logger.log_message("Starting PowerController shutdown...", "debug")
+        view = self._get_latest_status_view()
+        for output in self.outputs:
+            if output.shutdown(view):
+                self._force_output_off(output, view)
+
+        view = self._get_latest_status_view()
+        self._save_system_state(view, force_post=True)
+        self.logger.log_message("PowerController shutdown complete.", "detailed")
 
     def print_to_console(self, message: str):
         """Print a message to the console if PrintToConsole is enabled.
@@ -691,49 +734,50 @@ class PowerController:
             self.logger.log_message(f"Loaded system state from {system_state_path}", "debug")
             return state_data
 
-    def _save_system_state(self, view: SmartDeviceView, force_post: bool = False):
+    def _save_system_state(self, view: SmartDeviceView, force_post: bool = False) -> None:
         """Saves the system state to disk.
 
         Args:
             view (SmartDeviceView): The current SmartDeviceView snapshot.
             force_post (bool): If True, force posting the state to the web viewer.
         """
-        # Save the output consumption data if needed
-        self._save_output_usage_data()
+        # Serialise all state-file writes. The tick loop and shutdown (called from two
+        # threads on SIGTERM) can both reach this; concurrent writers race on the shared
+        # .tmp file and the loser fails with FileNotFoundError. See issue #121.
+        with self._save_lock:
+            # Save the output consumption data if needed
+            self._save_output_usage_data()
 
-        system_state_path = self._get_system_state_path()
-        if not system_state_path:
-            return
+            system_state_path = self._get_system_state_path()
+            if not system_state_path:
+                return
 
-        try:
-            save_object = {
-                "SchemaVersion": SCHEMA_VERSION,
-                "StateFileType": "PowerController",
-                "DeviceName": self.app_label,
-                "SaveTime": DateHelper.now(),
-                "MajorCurrencySymbol": self.currency_major_symbol,
-                "MinorCurrencySymbol": self.currency_minor_symbol,
-                "Outputs": [],
-                "Scheduler": self.scheduler.get_save_object(),
-                "TempProbeLogging": self.temp_probe_logging,
-                "TeslaChargeData": None,
-                "OutputMetering": self.output_metering,
-            }
-            # Add Tesla charge data if enabled
-            if self.save_tesla_raw_data:
-                save_object["TeslaChargeData"] = self.tesla_charge_data
+            try:
+                save_object = {
+                    "SchemaVersion": SCHEMA_VERSION,
+                    "StateFileType": "PowerController",
+                    "DeviceName": self.app_label,
+                    "SaveTime": DateHelper.now(),
+                    "MajorCurrencySymbol": self.currency_major_symbol,
+                    "MinorCurrencySymbol": self.currency_minor_symbol,
+                    "Outputs": [],
+                    "Scheduler": self.scheduler.get_save_object(),
+                    "TempProbeLogging": self.temp_probe_logging,
+                    "TeslaChargeData": None,
+                    "OutputMetering": self.output_metering,
+                }
+                # Add Tesla charge data if enabled
+                if self.save_tesla_raw_data:
+                    save_object["TeslaChargeData"] = self.tesla_charge_data
 
-            for output in self.outputs:
-                output_save_object = output.get_save_object(view)
-                save_object["Outputs"].append(output_save_object)
+                for output in self.outputs:
+                    output_save_object = output.get_save_object(view)
+                    save_object["Outputs"].append(output_save_object)
 
-            # Save the file
-            JSONEncoder.save_to_file(save_object, system_state_path)
-        except (TypeError, ValueError, RuntimeError, OSError) as e:
-            self.logger.log_fatal_error(f"Error saving system state: {e}")
-        else:
-            # self.logger.log_message(f"System state saved to {system_state_path}", "debug")
-            pass
+                # Save the file
+                JSONEncoder.save_to_file(save_object, system_state_path)
+            except (TypeError, ValueError, RuntimeError, OSError) as e:
+                self.logger.log_fatal_error(f"Error saving system state to {system_state_path}: {describe_exception(e)}")
 
         # Post the state data to the PowerController Viewer web app if needed
         self._post_state_to_web_viewer(view, force_post)
