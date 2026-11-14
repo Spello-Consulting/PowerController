@@ -159,6 +159,11 @@ class WebAppNotifier:
         if loop is None or queue is None:
             return
 
+        # During shutdown the webapp's event loop may already be closed; scheduling a
+        # callback on a closed loop raises. Skip quietly in that case. See issue #121.
+        if loop.is_closed():
+            return
+
         def _enqueue() -> None:
             # If we're already backed up, a later snapshot will catch up.
             with contextlib.suppress(asyncio.QueueFull):
