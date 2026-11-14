@@ -9,7 +9,7 @@ from pathlib import Path
 from threading import Event
 from mergedeep import merge
 
-from sc_foundation import SCCommon, SCConfigManager, SCLogger, RestartPolicy, ThreadManager
+from sc_foundation import ManagedThread, SCCommon, SCConfigManager, SCLogger, RestartPolicy, ThreadManager
 
 from sc_smart_device import SmartDeviceWorker, SCSmartDevice, smart_devices_validator
 
@@ -19,6 +19,46 @@ from dataapi import create_asgi_app as create_data_api_app
 from dataapi import serve_asgi_blocking as serve_data_api_blocking
 from local_enumerations import CONFIG_FILE
 from webapp import create_asgi_app, serve_asgi_blocking
+
+
+# Time allowed for the controller thread to finish its current tick and run shutdown()
+# (which forces outputs off and saves final state) before the remaining threads are
+# stopped. Must exceed one tick plus the per-output forced-off waits. See issue #121.
+CONTROLLER_SHUTDOWN_TIMEOUT = 30.0
+
+
+def shutdown_threads(
+    tm: ThreadManager,
+    controller_thread: ManagedThread,
+    stop_event: Event,
+    wake_event: Event,
+    logger: SCLogger,
+) -> None:
+    """Stop all managed threads, letting the controller finish shutdown() first.
+
+    The smart device worker is registered before the controller, so
+    ``ThreadManager.stop_all()`` would stop the worker first. But
+    ``PowerController.shutdown()`` needs the worker alive to force outputs off and save
+    final state. So signal the stop, wait for the controller thread to run its
+    ``shutdown()`` while the worker is still alive, and only then stop and join the
+    remaining threads. See issue #121.
+
+    Args:
+        tm (ThreadManager): The thread manager owning all worker threads.
+        controller_thread (ManagedThread): The managed controller thread to drain first.
+        stop_event (Event): The shared stop event signalling threads to exit.
+        wake_event (Event): Event that wakes the controller loop from its timed sleep.
+        logger (SCLogger): Logger for the shutdown summary message.
+    """
+    stop_event.set()
+    wake_event.set()
+    # Let the controller thread finish any in-progress tick and run shutdown() (force
+    # outputs off + save final state) while the smart device worker is still alive.
+    controller_thread.join(timeout=CONTROLLER_SHUTDOWN_TIMEOUT)
+    # Now stop and join the remaining threads (smart device worker, webapp, data api).
+    tm.stop_all()
+    tm.join_all(timeout_per_thread=10.0)
+    logger.log_message("PowerController application stopped.", "summary")
 
 
 def parse_command_line_args() -> dict[str, str | None]:
@@ -204,8 +244,9 @@ def main():  # noqa: PLR0915
         stop_event=stop_event,  # still used by ThreadManager for signaling
     )
 
-    # Manage the controller loop as a thread too
-    tm.add(
+    # Manage the controller loop as a thread too. Keep a handle so we can join it
+    # first on shutdown, before the smart device worker is stopped (see issue #121).
+    controller_thread = tm.add(
         name="controller",
         target=controller.run,
         kwargs={"stop_event": stop_event},
@@ -240,9 +281,7 @@ def main():  # noqa: PLR0915
                 break
             stop_event.wait(timeout=1.0)
     finally:
-        tm.stop_all()
-        tm.join_all(timeout_per_thread=10.0)
-        logger.log_message("PowerController application stopped.", "summary")
+        shutdown_threads(tm, controller_thread, stop_event, wake_event, logger)
 
 
 if __name__ == "__main__":

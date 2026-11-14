@@ -300,6 +300,18 @@ class PowerController:
 
         self.shutdown()
 
+    def stop(self) -> None:
+        """Wake the main loop so it sees the stop event and exits.
+
+        ``ThreadManager.stop_all()`` calls the first of ``stop()``/``shutdown()``/``close()``
+        on the thread target's instance. Providing ``stop()`` means it never calls
+        ``shutdown()`` directly from the main thread while a tick may be in progress;
+        instead ``run()`` calls ``shutdown()`` itself once the current tick has finished,
+        on the controller thread. Do not call ``shutdown()`` or do any cleanup here.
+        See issue #121.
+        """
+        self.wake_event.set()
+
     def shutdown(self) -> None:
         """Shutdown the power controller, turning off outputs if configured to do so.
 
