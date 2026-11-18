@@ -154,14 +154,14 @@ Outputs:
     MinHoursAlert: True
     MaxHours: 10
     # Set TargetHours to -1 to run for all hours that fall within schedule or best price
-    TargetHours: 6
+    TargetHours: 7
     MonthlyTargetHours:
       April: 5
       May: 5
       June: 5
       July: 5
       August: 5
-    MaxShortfallHours: 0
+    MaxShortfallHours: 2
     MinOnTime: 15        # Minimum minutes to stay on once turned on
     MinOffTime: 10        # Optional: minimum minutes to stay off (prevent rapid cycling)    
     MaxBestPrice: 25.0
