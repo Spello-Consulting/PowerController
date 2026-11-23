@@ -1,0 +1,15 @@
+# Auto-deploy settings for this project. See
+# https://spello-consulting.github.io/automation/deployment/auto-deploy/
+Enabled: true
+
+# Hosts to deploy to automatically: a list of deploy.yml environment names, or "all".
+Environments: [all]
+
+# When to deploy new commits. Use one of Interval or At.
+Schedule:
+  # Interval: 1h          # every 6 hours, counted from midnight: 00:00, 06:00, 12:00, 18:00
+  At: ["08:00"]       # or: at these local times each day
+  # Immediate: true
+
+# Optional. Defaults to Australia/Sydney.
+TimeZone: Australia/Sydney
