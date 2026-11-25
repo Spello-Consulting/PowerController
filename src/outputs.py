@@ -42,6 +42,7 @@ from run_plan import RunPlanner
 from scheduler import Scheduler
 from helpers import get_currency_symbols, resolve_current_price
 from output_constraint import OutputConstraint
+from temp_probe_averager import TempProbeAverager
 from ups_integration import UPSIntegration
 from weather_integration import WeatherIntegration
 
@@ -50,7 +51,7 @@ class OutputManager:  # noqa: PLR0904
     """Manages the state of a single Smart Device output device and associated resources."""
 
     # Public Functions ============================================================================
-    def __init__(self, output_config: dict, config: SCConfigManager, logger: SCLogger, scheduler: Scheduler, pricing: PricingManager, view: SmartDeviceView, ups_integration: UPSIntegration, weather_integration: WeatherIntegration, saved_state: dict | None = None):  # noqa: PLR0915
+    def __init__(self, output_config: dict, config: SCConfigManager, logger: SCLogger, scheduler: Scheduler, pricing: PricingManager, view: SmartDeviceView, ups_integration: UPSIntegration, weather_integration: WeatherIntegration, temp_probe_averager: TempProbeAverager, saved_state: dict | None = None):  # noqa: PLR0915
         """Manages the state of a single Smart Device output device.
 
         Args:
@@ -62,6 +63,7 @@ class OutputManager:  # noqa: PLR0904
             view (SmartDeviceView): The current view of the Smart Device devices.
             ups_integration (UPSIntegration): The UPS integration manager for handling UPS-related tasks.
             weather_integration (WeatherIntegration): The weather integration manager for handling weather-related constraints.
+            temp_probe_averager (TempProbeAverager): The rolling-average provider for temp probe readings.
             saved_state (dict | None): The previously saved state of the output manager, if any.
         """
         self.output_config = output_config
@@ -132,6 +134,7 @@ class OutputManager:  # noqa: PLR0904
         # UPS integration
         self.ups_integration = ups_integration
         self.weather_integration = weather_integration
+        self.temp_probe_averager = temp_probe_averager
 
         # Track state changes
         self._output_action_request: OutputAction | None = None
@@ -298,6 +301,7 @@ class OutputManager:  # noqa: PLR0904
                 weather_integration=self.weather_integration,
                 device_output_id=self.device_output_id,
                 view=view,
+                temp_probe_averager=self.temp_probe_averager,
             )
 
             # ParentDeviceOutput

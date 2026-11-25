@@ -4,6 +4,7 @@ from sc_smart_device import SmartDeviceView
 from sc_weather.models import WeatherCondition
 
 from local_enumerations import UPSMode, WeatherMode
+from temp_probe_averager import TempProbeAverager
 from ups_integration import UPSIntegration
 from weather_integration import WeatherIntegration
 
@@ -11,13 +12,14 @@ from weather_integration import WeatherIntegration
 class OutputConstraint:
     """Evaluates constraint conditions for an output device."""
 
-    def __init__(self, output_config: dict, name: str, logger: SCLogger, ups_integration: UPSIntegration, weather_integration: WeatherIntegration, device_output_id: int, view: SmartDeviceView):
+    def __init__(self, output_config: dict, name: str, logger: SCLogger, ups_integration: UPSIntegration, weather_integration: WeatherIntegration, device_output_id: int, view: SmartDeviceView, temp_probe_averager: TempProbeAverager):
         self.output_config = output_config
         self.name = name
         self.logger = logger
         self.ups_integration = ups_integration
         self.weather_integration = weather_integration
         self.device_output_id = device_output_id
+        self.temp_probe_averager = temp_probe_averager
 
         self.dates_off: list[dict] = []
         dates_off_list = output_config.get("DatesOff", [])
@@ -214,7 +216,7 @@ class OutputConstraint:
             if not probe_id or not isinstance(probe_id, int) or not set_temp or not isinstance(set_temp, int | float) or condition not in {"GreaterThan", "LessThan"}:
                 continue
 
-            probe_temp = view.get_temp_probe_temperature(probe_id)
+            probe_temp = self.temp_probe_averager.get_temperature(view, probe_id)
 
             self.logger.log_message(f"Checking constraint: output {self.name}; probe: {probe_name}; condition: {condition}; set temp: {set_temp}°C; fall back temp: {fall_back_temp}°C; probe reads: {probe_temp}", "all")
 

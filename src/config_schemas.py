@@ -46,6 +46,7 @@ class ConfigSchema:
                 "schema": {
                     "Label": {"type": "string", "required": False, "nullable": True},
                     "PollingInterval": {"type": "number", "required": False, "nullable": True, "min": 10, "max": 600},
+                    "TempProbeAveragingWindow": {"type": "number", "required": False, "nullable": True, "min": 0, "max": 86400},
                     "ReportCriticalErrorsDelay": {"type": "number", "required": False, "nullable": True, "min": 1, "max": 3600},
                     "PrintToConsole": {"type": "boolean", "required": False, "nullable": True},
                     "DefaultPrice": {"type": "number", "required": False, "nullable": True, "min": 10, "max": 1000},

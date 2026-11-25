@@ -68,6 +68,7 @@ def _make_constraint(weather_config, reading):
         weather_integration=weather_integration,
         device_output_id=1,
         view=None,
+        temp_probe_averager=MagicMock(),
     )
 
 
@@ -130,6 +131,7 @@ class TestWeatherConstraintParsing:
             weather_integration=MagicMock(),
             device_output_id=1,
             view=None,
+            temp_probe_averager=MagicMock(),
         )
         assert oc.weather_constraint is None
 
@@ -169,6 +171,7 @@ class TestWeatherConstraintEvaluation:
             weather_integration=MagicMock(),
             device_output_id=1,
             view=None,
+            temp_probe_averager=MagicMock(),
         )
         assert oc.get_weather_constraint_status() == WeatherMode.AUTO
 
