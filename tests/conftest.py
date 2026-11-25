@@ -18,6 +18,7 @@ if str(SRC_DIR) not in sys.path:
 from config_schemas import ConfigSchema
 from sc_foundation import SCConfigManager, SCLogger
 from scheduler import Scheduler
+from temp_probe_averager import TempProbeAverager
 from ups_integration import UPSIntegration
 from weather_integration import WeatherIntegration
 
@@ -82,6 +83,12 @@ def ups_integration(config, logger):
 def weather_integration(config, logger):
     """Return a WeatherIntegration built from the test config (disabled unless WeatherClient configured)."""
     return WeatherIntegration(config, logger)
+
+
+@pytest.fixture(scope="session")
+def temp_probe_averager(config, logger):
+    """Return a TempProbeAverager built from the test config (disabled unless TempProbeAveragingWindow set)."""
+    return TempProbeAverager(config, logger)
 
 
 @pytest.fixture(scope="session")

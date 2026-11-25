@@ -8,6 +8,8 @@ General:
   DefaultPrice: 25.0
   CurrencySymbol: €
   SubunitSymbol: ¢
+  TempProbeAveragingWindow: 60
+
  
 Website:
   HostingIP: 0.0.0.0

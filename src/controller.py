@@ -61,6 +61,7 @@ except ImportError:
 
     class TeslaMateOutput:  # type: ignore[no-redef]
         """Stub used when the teslamate optional dependency is not installed."""
+from temp_probe_averager import TempProbeAverager
 from ups_integration import UPSIntegration
 from weather_integration import WeatherIntegration
 
@@ -156,6 +157,9 @@ class PowerController:
 
         # Weather Integration
         self.weather_integration = WeatherIntegration(config, logger)
+
+        # Temp probe rolling-average (General.TempProbeAveragingWindow)
+        self.temp_probe_averager = TempProbeAverager(config, logger)
 
         # DataAPI related
         self.data_api_data: dict = {}   # Safe copy of the latest data
@@ -521,7 +525,7 @@ class PowerController:
                 # Create a new output manager
                 output_manager = None
                 if output_type == "smart_device":
-                    output_manager = OutputManager(output_cfg, self.config, self.logger, self.scheduler, self.pricing, view, self.ups_integration, self.weather_integration, output_state)
+                    output_manager = OutputManager(output_cfg, self.config, self.logger, self.scheduler, self.pricing, view, self.ups_integration, self.weather_integration, self.temp_probe_averager, output_state)
                 if output_type == "teslamate":
                     output_manager = TeslaMateOutput(output_cfg, self.config, self.logger, self.scheduler, self.pricing, self.tesla_charge_data, output_state) # pyright: ignore[reportCallIssue]
                 if output_type == "meter":
@@ -593,6 +597,9 @@ class PowerController:
         # Reinitialise the weather integration
         self.weather_integration.initialise()
 
+        # Reinitialise the temp probe averager (re-reads the averaging window from config)
+        self.temp_probe_averager.initialise()
+
         # Load DataAPI data if enabled
         self._data_api_config = self.config.get("DataAPI", default={}) or {}
         self._initialise_data_api_cache()
@@ -624,6 +631,10 @@ class PowerController:
             view = self._get_latest_status_view()
         else:
             view = self._refresh_device_statuses()
+
+        # Record the latest temp probe readings into the rolling-average buffers. Done
+        # before any consumer reads a probe temperature so averaged values are current.
+        self.temp_probe_averager.record(view)
 
         # Get the latest UPS data and update the UPSIntegration object
         self.ups_integration.read_ups_data()
@@ -1487,7 +1498,7 @@ class PowerController:
             probe_name = probe.get("Name")
             if not probe_id or not probe_name:
                 continue
-            temperature = view.get_temp_probe_temperature(probe_id)
+            temperature = self.temp_probe_averager.get_temperature(view, probe_id)
             last_reading_time = view.get_temp_probe_reading_time(probe_id)
 
             # Check if we need to skip this reading based on last reading time
@@ -1653,7 +1664,7 @@ class PowerController:
             if not probe_id:
                 self.logger.log_message(f"Data API: Temp Probe {name} not found among configured probes; skipping.", "error")
                 continue
-            probe_temp = view.get_temp_probe_temperature(probe_id)
+            probe_temp = self.temp_probe_averager.get_temperature(view, probe_id)
 
             # Now build a logging history list if available for this probe
             probe_history = []
