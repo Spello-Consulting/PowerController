@@ -9,7 +9,7 @@ General:
   PrintToConsole: False
   # A default price to use if the Amber API is not available and there is no schedule price defined
   DefaultPrice: 32.0
-
+  TempProbeAveragingWindow: 60
 
 Website:
   HostingIP: 0.0.0.0
