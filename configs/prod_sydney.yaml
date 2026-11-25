@@ -36,7 +36,6 @@ AmberAPI:
   UsageMaxDays: -1
   # Location of the latest prices data cache file
   PricesCacheFile: logs/latest_prices.json
-  TempProbeAveragingWindow: 60
 
 
 # Use this section to configure your smart devices used to control the lights
