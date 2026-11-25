@@ -1167,6 +1167,10 @@
 General:
   Label: MyPower          # A label for this installation - used in the email subject and web viewer app
   PollingInterval: 30     # Number of seconds to sleep between each check of the run plan and possible changes to outputs. Recommended 30 seconds.
+  # Optional rolling-average window (in seconds) for temperature probe readings. When set, every use of a probe temperature
+  # (output TempProbeConstraints, TempProbeLogging, the viewer/data API) uses the trailing average over this many seconds
+  # instead of the instantaneous reading. This smooths brief spikes that would otherwise flip an output. 0 or blank = disabled.
+  TempProbeAveragingWindow: 0
   # Some critical errors can trigger email notifications - for example the AmberAPI not responding. This is the time in minutes for an issue to 
   # persist before we send an email notification. Leave blank to disable.
   ReportCriticalErrorsDelay: 30
