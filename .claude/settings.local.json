@@ -14,7 +14,7 @@
       "Bash(cd:*)",
       "Bash(grep:*)",
       "Read(//Users/nick/Library/LaunchAgents/**)",
-      "Bash(launchctl list *)",
+      "Bash(launchctl list *)"
     ]
   }
 }

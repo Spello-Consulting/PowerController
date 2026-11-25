@@ -8,6 +8,7 @@ General:
   DefaultPrice: 32.0
   CurrencySymbol: €
   SubunitSymbol: ¢
+  TempProbeAveragingWindow: 30
 
  
 Website:
@@ -47,7 +48,26 @@ SCSmartDevices:
       Outputs:
         - Name: "Sydney Dev A O1"
         - Name: "Sydney Dev A O2"
+    - Name: Pool Solar
+      Model: Shelly2PMG3
+      Hostname: 192.168.87.21
+      DeviceAlertTemp: 85.0
+      Outputs:
+        - Name: "Solar Pump"
+        - Name: "Solar Valve"
+      Meters:
+        - Name: "Solar Pump Meter"
+        - Name: "Solar Valve Meter"
+      TempProbes:
+        - Name: "Pool Solar"
+        - Name: "Temp Pool Water"
+          RequiresOutput: "Pool Pump Output"
+        - Name: "Temp Solar Return"
+          RequiresOutput: "Solar Pump"
+        - Name: "Temp Roof"
+        - Name: "Temp Air"
 
+  
 # Configure the outputs for your devices and how they behave
 Outputs:
   - Name: Sydney Dev A
@@ -119,7 +139,7 @@ DataAPI:
 
 
 UPSIntegration:
-  Enable: True   # Set to True to enable monitoring of UPS devices
+  Enable: False   # Set to True to enable monitoring of UPS devices
   PollingInterval: 30   # How often to check the UPS status in seconds
   DataFile: logs/ups_status.csv   # Log UPS status to a CSV file. Set to blank to disable.
   DataFileWriteInterval: 60   # How often to write the UPS status to the CSV file in seconds. Set to 0 to write on every poll (not recommended).
@@ -129,3 +149,39 @@ UPSIntegration:
       Script: scripts/ups_runtime.sh --ups eaton@localhost --simulate
       MinChargeWhenDischarging: 25   # Minimum charge remaining in percent when discharging to consider the UPS as "healthy".
       MinChargeWhenCharging: 80   # Minimum charge remaining in percent when charging to consider the UPS as "healthy".
+
+
+TempProbeLogging:
+    Enable: True
+    Probes:   # A list of temp probes to monitor.
+      - Name: Temp Pool Water
+        DisplayName: Pool
+        Colour: Blue
+      - Name: Temp Air
+        DisplayName: Air
+        Colour: Red
+      - Name: Temp Roof
+        DisplayName: Roof
+        Colour: Black
+      - Name: Pool Solar
+        DisplayName: Solar Device
+        HideFromViewerApp: True
+      - Name: Temp Solar Return
+        DisplayName: Solar Return
+    LoggingInterval: 1
+    # LastReadingWithinMinutes: 180  # Only log readings that have been updated within this number of minutes
+    SavedStateFileMaxDays: 1
+    HistoryDataFile: logs/temperature_history.csv
+    HistoryDataFileMaxDays: 365
+    Charting:   # This contains settings for generating temperature charts for the web viewer app (future) and the PowerControllerViewer website.
+      Enable: True
+      Charts:
+        - Name: "Pool"
+          Probes:
+            - Temp Pool Water
+          DaysToShow: 10
+        - Name: "Roof"
+          Probes:
+            - Temp Air
+            - Temp Roof
+          DaysToShow: 10
