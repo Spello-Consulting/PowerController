@@ -78,14 +78,10 @@ jobs:
         run: |
           sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/gitrefresh.sh --yes --branch "$BRANCH"
 
-      - name: Deploy and start the service
-        run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy spelloapp
-
-      - name: Stop and disable the service
-        run: |
-          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh stop
-          sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh disable
-                  
+      # For now, we won't start the app on spelloapp
+      # - name: Deploy and start the service
+      #   run: sudo --chdir=/home/nick/scripts/PowerController /home/nick/scripts/pyutil/servicectrl.sh deploy spelloapp
+                 
       # - name: Verify service is running
       #   run: |
       #     sleep 6
