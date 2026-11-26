@@ -289,3 +289,50 @@ class TestAccessKeyEnforcement:
             # env key should work
             resp = c.get("/outputs", params={"access_key": "env-key"})
             assert resp.status_code == 200
+
+
+class TestGracefulShutdownTimeout:
+    """Regression tests for issue #126.
+
+    The Data API server runs in a non-daemon thread. Without a bounded graceful-shutdown
+    timeout, a lingering connection can keep that thread alive and block the whole
+    process from exiting until it is SIGKILLed. ``serve_asgi_blocking`` must give uvicorn
+    a bounded timeout.
+    """
+
+    def test_serve_configures_bounded_graceful_shutdown(self, logger, monkeypatch):
+        import threading
+
+        import dataapi
+
+        captured: dict[str, object] = {}
+
+        class _FakeServer:
+            def __init__(self, config):
+                captured["config"] = config
+                self.should_exit = False
+
+            def install_signal_handlers(self) -> None:  # pragma: no cover - replaced
+                pass
+
+            async def serve(self) -> None:
+                return None
+
+        monkeypatch.setattr(dataapi.uvicorn, "Server", _FakeServer)
+
+        cfg = MagicMock()
+        cfg.get.side_effect = lambda *keys, default=None: default  # noqa: ARG005
+
+        stop_event = threading.Event()
+        stop_event.set()  # resolve the stop watcher immediately
+
+        dataapi.serve_asgi_blocking(MagicMock(), cfg, logger, stop_event)
+
+        config = captured["config"]
+        assert config.timeout_graceful_shutdown is not None, (
+            "uvicorn must have a bounded graceful-shutdown timeout"
+        )
+        assert config.timeout_graceful_shutdown == int(
+            dataapi.DATA_API_GRACEFUL_SHUTDOWN_TIMEOUT
+        )
+        assert 0 < config.timeout_graceful_shutdown <= 30

@@ -23,6 +23,13 @@ if TYPE_CHECKING:
     from controller import PowerController
 
 
+# Maximum time uvicorn waits for in-flight connections to close during a graceful
+# shutdown before cancelling them. Without this bound, a lingering connection keeps the
+# (non-daemon) server thread alive indefinitely, which blocks the whole process from
+# exiting until it is SIGKILLed. See issue #126.
+DATA_API_GRACEFUL_SHUTDOWN_TIMEOUT = 5.0
+
+
 def _validate_access_key(config: SCConfigManager, logger: SCLogger, key_from_request: str | None) -> bool:
     """Validate the access key from the request.
 
@@ -255,7 +262,14 @@ def serve_asgi_blocking(app: FastAPI, config: SCConfigManager, logger: SCLogger,
     port = int(config.get("DataAPI", "Port", default=8081) or 8081)  # pyright: ignore[reportArgumentType]
 
     # Uvicorn log config can be noisy; keep our SCLogger as the source of truth.
-    uv_config = uvicorn.Config(app, host=host, port=port, log_level="warning", reload=False)
+    uv_config = uvicorn.Config(
+        app,
+        host=host,
+        port=port,
+        log_level="warning",
+        reload=False,
+        timeout_graceful_shutdown=int(DATA_API_GRACEFUL_SHUTDOWN_TIMEOUT),
+    )
     server = uvicorn.Server(uv_config)
     # Running under ThreadManager in a non-main thread: avoid installing signal handlers.
     server.install_signal_handlers = lambda: None  # type: ignore[method-assign]

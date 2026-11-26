@@ -700,3 +700,47 @@ class TestLogViewer:
         body = secured_log_client.get("/log", params={"key": "webapp-secret"}).text
         assert "/log/download?key=webapp-secret" in body
         assert "/system?key=webapp-secret" in body
+
+
+class TestGracefulShutdownTimeout:
+    """Regression tests for issue #126.
+
+    The web server runs in a non-daemon thread. If uvicorn is left with an unbounded
+    graceful-shutdown timeout, a lingering WebSocket connection (e.g. an open dashboard)
+    keeps that thread alive indefinitely and blocks the whole process from exiting until
+    it is SIGKILLed. ``serve_asgi_blocking`` must give uvicorn a bounded timeout.
+    """
+
+    def test_serve_configures_bounded_graceful_shutdown(self, monkeypatch):
+        import threading
+
+        import webapp
+
+        captured: dict[str, object] = {}
+
+        class _FakeServer:
+            def __init__(self, config):
+                captured["config"] = config
+                self.should_exit = False
+
+            def install_signal_handlers(self) -> None:  # pragma: no cover - replaced
+                pass
+
+            async def serve(self) -> None:
+                return None
+
+        monkeypatch.setattr(webapp.uvicorn, "Server", _FakeServer)
+
+        stop_event = threading.Event()
+        stop_event.set()  # resolve the stop watcher immediately
+
+        webapp.serve_asgi_blocking(MagicMock(), _make_config(), MagicMock(), stop_event)
+
+        config = captured["config"]
+        assert config.timeout_graceful_shutdown is not None, (
+            "uvicorn must have a bounded graceful-shutdown timeout"
+        )
+        assert config.timeout_graceful_shutdown == int(
+            webapp.WEB_SERVER_GRACEFUL_SHUTDOWN_TIMEOUT
+        )
+        assert 0 < config.timeout_graceful_shutdown <= 30

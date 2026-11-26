@@ -39,6 +39,13 @@ if TYPE_CHECKING:
     from controller import PowerController
 
 
+# Maximum time uvicorn waits for in-flight connections to close during a graceful
+# shutdown before cancelling them. Without this bound, an open dashboard WebSocket
+# keeps the (non-daemon) web server thread alive indefinitely, which blocks the whole
+# process from exiting until it is SIGKILLed. See issue #126.
+WEB_SERVER_GRACEFUL_SHUTDOWN_TIMEOUT = 5.0
+
+
 def _get_repo_root() -> Path:
     # src/webapp.py -> repo_root
     return Path(__file__).resolve().parent.parent
@@ -567,7 +574,12 @@ def serve_asgi_blocking(
 
     # Uvicorn log config can be noisy; keep our SCLogger as the source of truth.
     uv_config = uvicorn.Config(
-        app, host=host, port=port, log_level="warning", reload=False
+        app,
+        host=host,
+        port=port,
+        log_level="warning",
+        reload=False,
+        timeout_graceful_shutdown=int(WEB_SERVER_GRACEFUL_SHUTDOWN_TIMEOUT),
     )
     server = uvicorn.Server(uv_config)
     # Running under ThreadManager in a non-main thread: avoid installing signal handlers.
