@@ -116,11 +116,12 @@ class TempProbeAverager:
         Returns:
             float | None: The rolling-average temperature when averaging is enabled and
             in-window samples exist; otherwise the point-in-time reading (which may be
-            ``None`` if the probe is unavailable).
+            ``None`` if the probe is unavailable). Non-``None`` values are rounded to 1
+            decimal place.
         """
         if not self.enabled:
             disabled_value: float | None = view.get_temp_probe_temperature(probe_id)
-            return disabled_value
+            return round(disabled_value, 1) if disabled_value is not None else None
 
         buffer = self._samples.get(probe_id)
         if buffer:
@@ -128,11 +129,11 @@ class TempProbeAverager:
             self._prune(buffer, now)
             temps = [temp for _, temp in buffer]
             if temps:
-                return sum(temps) / len(temps)
+                return round(sum(temps) / len(temps), 1)
 
         # Enabled but no in-window samples (probe unavailable or just started): fall back.
         fallback_value: float | None = view.get_temp_probe_temperature(probe_id)
-        return fallback_value
+        return round(fallback_value, 1) if fallback_value is not None else None
 
     def _prune(self, buffer: deque[tuple[dt.datetime, float]], now: dt.datetime) -> None:
         """Drop samples older than the configured window from the left of the buffer.
