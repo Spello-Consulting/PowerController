@@ -632,11 +632,8 @@ OperatingSchedules:
         Price: 22.00
   - Name: Pool Heating
     Windows:
-      - StartTime: "02:00"
-        EndTime: "04:00"
-        DaysOfWeek: All
-      - StartTime: "10:30"
-        EndTime: "17:00"
+      - StartTime: "06:00"
+        EndTime: "18:00"
         DaysOfWeek: All
       - StartTime: "22:00"
         EndTime: "23:59"
